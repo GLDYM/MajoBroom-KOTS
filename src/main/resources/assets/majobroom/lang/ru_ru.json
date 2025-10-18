@@ -1,7 +1,6 @@
 {
   "item.majobroom.broom_item": "Метла Ведьмы",
   "item.majobroom.majo_hat": "Шляпа Ведьмы",
-  "item.majobroom.wand_item": "Палочка Ведьмы",
   "itemGroup.majo_group": "Majo's Broom",
   "message.majobroom.position": "положение: %d, %d",
   "message.majobroom.levelnotenough": "Недостаточный Уровень Опыта!",
