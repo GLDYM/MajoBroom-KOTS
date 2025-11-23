@@ -48,10 +48,10 @@
   "item.majobroom.broom.tooltip.behaviour2": "使扫帚_上升_及_下降_。",
   "item.majobroom.broom.tooltip.condition3": "Shift+左键点击扫帚",
   "item.majobroom.broom.tooltip.behaviour3": "_回收_扫帚到物品栏。",
-  "item.majobroom.broom.tooltip.condition4": "按下 Y 键",
+  "item.majobroom.broom.tooltip.condition4": "骑乘时按下 Y 键",
   "item.majobroom.broom.tooltip.behaviour4": "_打开扫帚配置界面_，调整飞行参数。",
   "item.majobroom.broom.tooltip.condition5": "按下 R 键",
   "item.majobroom.broom.tooltip.behaviour5": "_快速召唤_或_回收_扫帚。",
   "item.majobroom.broom.tooltip.condition6": "Mod兼容",
-  "item.majobroom.broom.tooltip.behaviour6": "兼容_精妙背包_与_装饰盔甲_，扫帚可以从_背包_中快速召唤，魔女套装也支持位于_装饰盔甲栏_"
+  "item.majobroom.broom.tooltip.behaviour6": "兼容_精妙背包_与_装饰盔甲_，扫帚可以从_背包_中快速召唤，魔女套装也支持位于_装饰盔甲栏_。"
 }

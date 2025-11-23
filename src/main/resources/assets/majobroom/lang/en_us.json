@@ -48,7 +48,7 @@
   "item.majobroom.broom.tooltip.behaviour2": "Make the broom _ascend_ and _descend_.",
   "item.majobroom.broom.tooltip.condition3": "Shift + Left-click on Broom",
   "item.majobroom.broom.tooltip.behaviour3": "_Collect_ the broom back to inventory.",
-  "item.majobroom.broom.tooltip.condition4": "Press Y Key",
+  "item.majobroom.broom.tooltip.condition4": "Press Y Key while Riding",
   "item.majobroom.broom.tooltip.behaviour4": "_Open broom configuration interface_ to adjust flight parameters.",
   "item.majobroom.broom.tooltip.condition5": "Press R Key",
   "item.majobroom.broom.tooltip.behaviour5": "_Quickly summon_ or _collect_ the broom.",
