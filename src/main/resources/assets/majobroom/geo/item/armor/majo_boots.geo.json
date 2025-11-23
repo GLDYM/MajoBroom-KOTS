@@ -13,6 +13,14 @@
 			"bones": [
 				{
 					"name": "armorRightLeg",
+					"pivot": [-1.9, 12, 0]
+				},
+				{
+					"name": "armorLeftLeg",
+					"pivot": [1.9, 12, 0]
+				},
+				{
+					"name": "armorRightBoot",
 					"pivot": [-1.9, 12, 0],
 					"cubes": [
 						{"origin": [-3.9, 0, -2], "size": [4, 12, 4], "uv": [16, 48], "inflate": 0.05},
@@ -20,7 +28,7 @@
 					]
 				},
 				{
-					"name": "armorLeftLeg",
+					"name": "armorLeftBoot",
 					"pivot": [1.9, 12, 0],
 					"cubes": [
 						{"origin": [-0.1, 0, -2], "size": [4, 12, 4], "uv": [16, 48], "inflate": 0.05},
