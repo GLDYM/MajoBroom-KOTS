@@ -16,13 +16,6 @@
 					"pivot": [0, 0, 0]
 				},
 				{
-					"name": "armorMedal",
-					"pivot": [0, 0, 0],
-					"cubes": [
-						{"origin": [-5.6, 12.2, -11], "size": [18, 18, 18], "uv": [0, 0], "inflate": -8}
-					]
-				},
-				{
 					"name": "armorHead",
 					"parent": "hide",
 					"pivot": [0, 24, 0],
@@ -40,6 +33,14 @@
 					"name": "bigBody",
 					"parent": "armorBody",
 					"pivot": [0, 24, 0]
+				},
+				{
+					"name": "armorMedal",
+					"parent": "bigBody",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-5.6, 12.2, -11], "size": [18, 18, 18], "uv": [0, 0], "inflate": -8}
+					]
 				},
 				{
 					"name": "bone3",
