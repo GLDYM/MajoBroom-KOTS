@@ -32,9 +32,9 @@ public class MajoBroom
     private static final Logger LOGGER = LogUtils.getLogger();
     // 移除模板示例，使用自有注册类
 
-    public MajoBroom()
+    public MajoBroom(FMLJavaModLoadingContext context)
     {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -51,7 +51,7 @@ public class MajoBroom
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         // 使用SERVER类型：配置存储在服务端并同步到客户端
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        context.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
         // Initialize GeckoLib (client+server safe)
         GeckoLib.initialize();
