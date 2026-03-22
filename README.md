@@ -1,4 +1,8 @@
-Forge version of Majo's Broom (refactored)
+# Majo's Broom KOTS
+
+KOTS Fork of Majo's Broom. This mod expanded Majo's clothes from 2 to 4, adjusted the armor value of Majo's clothes, added effects to them, and made them unbreakable.
+
+For players, use [https://github.com/innnky/majobroom_forge](https://github.com/innnky/majobroom_forge) . For modpack creators, you must change the recipes of Majo's clothes to match the effects they give.
 
 ### Acknowledgements
 + cursor for vibe coding

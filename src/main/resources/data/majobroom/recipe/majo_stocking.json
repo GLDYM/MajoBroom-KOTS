@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "m m",
+    "m m",
+    "m m"
+  ],
+  "key": {
+    "m": {
+      "item": "minecraft:white_wool"
+    }
+  },
+  "result": {
+    "id": "majobroom:majo_stocking",
+    "count": 1
+  }
+}

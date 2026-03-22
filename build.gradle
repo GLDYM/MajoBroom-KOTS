@@ -187,6 +187,10 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
+tasks.named('jar') {
+    archiveFileName.set("${mod_id}-kots-${minecraft_version}-${mod_version}.jar") // Set the full name of the generated jar to include the version
+}
+
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
     module {
