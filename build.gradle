@@ -200,6 +200,10 @@ tasks.named('jar', Jar).configure {
     finalizedBy 'reobfJar'
 }
 
+tasks.named('jar') {
+    archiveFileName.set("${mod_id}-kots-${minecraft_version}-${mod_version}.jar") // Set the full name of the generated jar to include the version
+}
+
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
 // tasks.named('publish').configure {
 //     dependsOn 'reobfJar'
