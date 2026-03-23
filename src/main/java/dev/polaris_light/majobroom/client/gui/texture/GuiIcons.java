@@ -2,7 +2,8 @@ package dev.polaris_light.majobroom.client.gui.texture;
 
 import dev.polaris_light.majobroom.client.gui.base.RenderElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 
 /**
  * GUI 图标管理枚举
@@ -20,8 +21,8 @@ public enum GuiIcons implements RenderElement {
     I_AUTO_HOVER(4, 0),          // (4, 0) * 16 - 自动悬浮
     I_CONFIRM(5, 0);             // (5, 0) * 16 - 确认按钮
     
-    public static final ResourceLocation ICON_ATLAS = 
-        ResourceLocation.fromNamespaceAndPath("majobroom", "textures/gui/icons.png");
+    public static final Identifier ICON_ATLAS = 
+        Identifier.fromNamespaceAndPath("majobroom", "textures/gui/icons.png");
     public static final int ICON_SIZE = 16;
     public static final int ICON_ATLAS_SIZE = 256;
 
@@ -36,7 +37,18 @@ public enum GuiIcons implements RenderElement {
 
     @Override
     public void render(GuiGraphics graphics, int x, int y) {
-        graphics.blit(ICON_ATLAS, x, y, iconX, iconY, ICON_SIZE, ICON_SIZE);
+        graphics.blit(
+            RenderPipelines.GUI_TEXTURED,
+            ICON_ATLAS,
+            x,
+            y,
+            iconX,
+            iconY,
+            ICON_SIZE,
+            ICON_SIZE,
+            ICON_ATLAS_SIZE,
+            ICON_ATLAS_SIZE
+        );
     }
 
     public int getIconX() {

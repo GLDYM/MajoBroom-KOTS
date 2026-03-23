@@ -6,15 +6,12 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * 扫帚飞行音效
  * 100%复刻原版鞘翅音效实现 {@link net.minecraft.client.resources.sounds.ElytraOnPlayerSoundInstance}
  * 仅将player替换为broom，其余逻辑完全一致
  */
-@OnlyIn(value=Dist.CLIENT)
 public class BroomFlyingSound extends AbstractTickableSoundInstance {
     
     public static final int DELAY = 20;
@@ -45,7 +42,6 @@ public class BroomFlyingSound extends AbstractTickableSoundInstance {
             } else if (this.time < 40) {
                 this.volume *= (float)(this.time - 20) / 20.0f;
             }
-            float f1 = 0.8f;
             this.pitch = this.volume > 0.8f ? 1.0f + (this.volume - 0.8f) : 1.0f;
             // this.volume = 0f;
         } else {

@@ -6,9 +6,7 @@
     "p p"
   ],
   "key": {
-    "p": {
-      "item": "minecraft:purple_wool"
-    }
+    "p": "minecraft:purple_wool"
   },
   "result": {
     "id": "majobroom:majo_boots",

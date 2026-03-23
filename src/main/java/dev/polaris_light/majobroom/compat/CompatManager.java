@@ -8,7 +8,6 @@ import net.neoforged.fml.ModList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +69,9 @@ public class CompatManager {
      * @param item 要查找的物品
      * @return 查找结果，包含物品和来源背包 UUID
      */
-    @Nonnull
-    public static FindItemResult findItemInAllInventories(@Nonnull ServerPlayer player, @Nonnull Item item) {
+    public static FindItemResult findItemInAllInventories(ServerPlayer player, Item item) {
         // 1. 先检查原版物品栏
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (stack.is(item)) {
                 return new FindItemResult(stack, null);  // 从原版物品栏找到，没有背包 UUID
             }
@@ -97,10 +95,9 @@ public class CompatManager {
      * @param item 要移除的物品
      * @return 移除结果，包含移除的物品（副本）和来源背包 UUID
      */
-    @Nonnull
-    public static FindItemResult removeItemFromAllInventories(@Nonnull ServerPlayer player, @Nonnull Item item) {
+    public static FindItemResult removeItemFromAllInventories(ServerPlayer player, Item item) {
         // 1. 先检查原版物品栏
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (stack.is(item)) {
                 // 先复制一份物品（用于返回和读取配置）
                 ItemStack copy = stack.copy();
@@ -128,7 +125,7 @@ public class CompatManager {
      * @param stack 要存储的物品堆栈
      * @return 是否成功存储
      */
-    public static boolean storeItemToBackpack(@Nonnull ServerPlayer player, @Nullable java.util.UUID backpackUUID, @Nonnull ItemStack stack) {
+    public static boolean storeItemToBackpack(ServerPlayer player, @Nullable java.util.UUID backpackUUID, ItemStack stack) {
         if (stack.isEmpty() || backpackUUID == null) {
             return false;
         }
@@ -146,8 +143,7 @@ public class CompatManager {
      * @param entity 生物实体
      * @return 扩展装备槽中的装备列表，如果没有兼容模组则返回空列表
      */
-    @Nonnull
-    public static List<ItemStack> getExtraArmorItems(@Nonnull LivingEntity entity) {
+    public static List<ItemStack> getExtraArmorItems(LivingEntity entity) {
         List<ItemStack> extraArmor = new ArrayList<>();
         
         // 检查装饰盔甲模组（如果已加载）

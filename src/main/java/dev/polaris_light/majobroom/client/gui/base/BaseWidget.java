@@ -3,10 +3,10 @@ package dev.polaris_light.majobroom.client.gui.base;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -67,7 +67,7 @@ public abstract class BaseWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         beforeRender(graphics, mouseX, mouseY, partialTicks);
         doRender(graphics, mouseX, mouseY, partialTicks);
         afterRender(graphics, mouseX, mouseY, partialTicks);
@@ -77,20 +77,20 @@ public abstract class BaseWidget extends AbstractWidget {
     /**
      * 渲染前准备（子类可重写）
      */
-    protected void beforeRender(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        graphics.pose().pushPose();
+    protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.pose().pushMatrix();
     }
 
     /**
      * 执行渲染（子类必须实现）
      */
-    protected abstract void doRender(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    protected abstract void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
 
     /**
      * 渲染后清理（子类可重写）
      */
-    protected void afterRender(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        graphics.pose().popPose();
+    protected void afterRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.pose().popMatrix();
     }
 
     /**
@@ -100,18 +100,23 @@ public abstract class BaseWidget extends AbstractWidget {
         onClick.accept((int) mouseX, (int) mouseY);
     }
 
-    @Override
-    protected boolean clicked(double mouseX, double mouseY) {
-        return this.isMouseOver(mouseX, mouseY);
-    }
+    // @Override
+    // protected boolean clicked(double mouseX, double mouseY) {
+    //     return this.isMouseOver(mouseX, mouseY);
+    // }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
+        // 从事件对象里取坐标
+        double mouseX = event.x();
+        double mouseY = event.y();
+
         runCallback(mouseX, mouseY);
     }
 
+
     @Override
-    protected void updateWidgetNarration(@Nonnull NarrationElementOutput output) {
+    protected void updateWidgetNarration(NarrationElementOutput output) {
         defaultButtonNarrationText(output);
     }
 }

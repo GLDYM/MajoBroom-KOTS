@@ -5,11 +5,15 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-import javax.annotation.Nonnull;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 基础屏幕类
@@ -78,7 +82,7 @@ public abstract class BaseScreen extends Screen {
     /**
      * 批量移除控件
      */
-    protected void removeWidgets(@Nonnull GuiEventListener... widgets) {
+    protected void removeWidgets(GuiEventListener... widgets) {
         for (GuiEventListener widget : widgets) {
             removeWidget(widget);
         }
@@ -94,7 +98,7 @@ public abstract class BaseScreen extends Screen {
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         // 渲染菜单背景（背景纹理，继承自 Screen）
         renderMenuBackground(graphics);
         
@@ -117,7 +121,7 @@ public abstract class BaseScreen extends Screen {
      * 渲染窗口背景（半透明遮罩）
      * 默认调用 renderBackground，子类可以重写以自定义背景
      */
-    protected void renderWindowBackground(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         renderBackground(graphics, mouseX, mouseY, partialTicks);
     }
 
@@ -126,7 +130,7 @@ public abstract class BaseScreen extends Screen {
      * 使用 fillGradient 渲染半透明遮罩
      */
     @Override
-    public void renderBackground(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         // 使用半透明的深灰色背景，不使用模糊效果
         // 0x50 是透明度（约31%），0x101010 是深灰色
         graphics.fillGradient(0, 0, this.width, this.height, 0x50_101010, 0x50_101010);
@@ -135,30 +139,53 @@ public abstract class BaseScreen extends Screen {
     /**
      * 渲染窗口内容（由子类实现）
      */
-    protected abstract void renderWindow(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    protected abstract void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
 
     /**
      * 渲染前景层（工具提示等）
      */
-    protected void renderWindowForeground(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        // 遍历所有控件，渲染工具提示
+    protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         for (Renderable widget : renderables) {
             if (widget instanceof BaseWidget baseWidget && baseWidget.isHovered() && baseWidget.visible) {
-                if (!baseWidget.getToolTip().isEmpty()) {
-                    graphics.renderComponentTooltip(font, baseWidget.getToolTip(), mouseX, mouseY);
+                var tooltip = baseWidget.getToolTip();
+                if (!tooltip.isEmpty()) {
+                    // 将 Component 转换为 ClientTooltipComponent
+                    List<ClientTooltipComponent> clientComponents =
+                            tooltip.stream()
+                                .map(Component::getVisualOrderText)
+                                .map(ClientTooltipComponent::create)
+                                .toList();
+
+                    // 使用新版 API
+                    graphics.renderTooltip(
+                            font,
+                            clientComponents,
+                            mouseX,
+                            mouseY,
+                            DefaultTooltipPositioner.INSTANCE, // 默认位置器
+                            null                               // 可选背景 Identifier
+                    );
                 }
             }
         }
     }
 
+
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        boolean keyPressed = super.keyPressed(keyCode, scanCode, modifiers);
-        if (keyPressed || getFocused() != null)
-            return keyPressed;
+    public boolean keyPressed(KeyEvent event) {
+        // 先交给父类处理
+        if (super.keyPressed(event)) {
+            return true;
+        }
+
+        // ESC 关闭界面
+        if (event.isEscape() && this.shouldCloseOnEsc()) {
+            this.onClose();
+            return true;
+        }
 
         // 允许用 E 键关闭界面（背包键）
-        if (this.minecraft != null && this.minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+        if (this.minecraft != null && this.minecraft.options.keyInventory.matches(event)) {
             this.onClose();
             return true;
         }

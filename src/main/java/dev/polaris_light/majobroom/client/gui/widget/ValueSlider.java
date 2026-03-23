@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -71,8 +72,9 @@ public class ValueSlider extends AbstractWidget {
         
         // 检查鼠标按钮状态，如果正在拖动但鼠标已释放，则停止拖动
         if (dragging && GLFW.glfwGetMouseButton(
-                Minecraft.getInstance().getWindow().getWindow(), 
-                GLFW.GLFW_MOUSE_BUTTON_LEFT) != GLFW.GLFW_PRESS) {
+            Minecraft.getInstance().getWindow().handle(),
+            GLFW.GLFW_MOUSE_BUTTON_LEFT
+        ) != GLFW.GLFW_PRESS) {
             // 鼠标已释放，播放确认音效（与按钮音效相同）
             Minecraft.getInstance().getSoundManager().play(
                 SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f)
@@ -105,6 +107,8 @@ public class ValueSlider extends AbstractWidget {
         int displayValue = value;
         if (dragging) {
             displayValue = getValueFromX(mouseX, barStartX);
+            // NeoForge 鼠标拖拽事件触发频率不稳定时，在渲染阶段也同步值，保证平滑拖动
+            setValue(displayValue);
             if (displayValue != lastHoveredValue) {
                 playScrollSound(displayValue);
                 lastHoveredValue = displayValue;
@@ -134,7 +138,7 @@ public class ValueSlider extends AbstractWidget {
         GuiTextures.VALUE_SETTINGS_CURSOR_RIGHT.render(graphics, cursorX + cursorWidth, barY);
         
         // 渲染文本
-        graphics.drawString(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, 0x442000, false);
+        graphics.drawString(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, 0xFF442000, false);
     }
     
     /**
@@ -194,11 +198,11 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && isHovered) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        if (event.button() == 0 && isMouseOver(event.x(), event.y())) {
             dragging = true;
             int barStartX = getX() + (width - barWidth) / 2;
-            int newValue = getValueFromX((int) mouseX, barStartX);
+            int newValue = getValueFromX((int) event.x(), barStartX);
             setValue(newValue);
             lastHoveredValue = newValue;
             return true;
@@ -207,8 +211,8 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0 && dragging) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (event.button() == 0 && dragging) {
             dragging = false;
             
             // 播放确认音效（与按钮音效相同）
@@ -222,8 +226,8 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (dragging) {
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
+        if (event.button() == 0 && dragging) {
             int barStartX = getX() + (width - barWidth) / 2;
             int newValue = getValueFromX((int) mouseX, barStartX);
             setValue(newValue);

@@ -6,15 +6,9 @@
     "   "
   ],
   "key": {
-    "p": {
-      "item": "minecraft:purple_wool"
-    },
-    "g": {
-      "item": "minecraft:gold_ingot"
-    },
-    "m": {
-      "item": "minecraft:pink_wool"
-    }
+    "p": "minecraft:purple_wool",
+    "g": "minecraft:gold_ingot",
+    "m": "minecraft:pink_wool"
   },
   "result": {
     "id": "majobroom:majo_hat",

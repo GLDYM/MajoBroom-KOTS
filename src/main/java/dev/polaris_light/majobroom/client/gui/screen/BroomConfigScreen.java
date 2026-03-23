@@ -9,7 +9,7 @@ import dev.polaris_light.majobroom.client.gui.widget.IconButton;
 import dev.polaris_light.majobroom.client.gui.widget.ValueSlider;
 import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.network.packet.BroomConfigPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -222,7 +222,6 @@ public class BroomConfigScreen extends AbstractBroomScreen {
             broomItem, 
             x + background.getWidth() + 10,      // x 位置
             y + background.getHeight() - 40,     // y 位置
-            -50,                                  // z 深度
             3.0f                                  // 缩放比例
         );
     }
@@ -236,7 +235,7 @@ public class BroomConfigScreen extends AbstractBroomScreen {
 
     private void sendConfigToServer() {
         if (broomEntity != null) {
-            PacketDistributor.sendToServer(new BroomConfigPayload(
+            ClientPacketDistributor.sendToServer(new BroomConfigPayload(
                 broomEntity.getId(),
                 perspectiveMode.ordinal(),  // 发送枚举序号
                 sidewaysSitting,

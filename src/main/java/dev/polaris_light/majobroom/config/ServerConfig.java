@@ -102,4 +102,5 @@ public class ServerConfig
         armorBless = ARMOR_BLESS_SPEC.get();
         armorImmortal = ARMOR_IMMORTAL_SPEC.get();
     }
+
 }

@@ -4,7 +4,6 @@ import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.entity.BroomEntity;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
@@ -32,7 +31,7 @@ public class BroomDismountHandler {
         }
         
         // 在服务端检查是否允许下马
-        if (!event.getLevel().isClientSide) {
+        if (!event.getLevel().isClientSide()) {
             // 如果扫帚标记为允许下马，则放行；否则取消事件
             if (!broom.isAllowDismount()) {
                 event.setCanceled(true);

@@ -1,32 +1,17 @@
 package dev.polaris_light.majobroom.client;
 
 import dev.polaris_light.majobroom.MajoBroom;
-import dev.polaris_light.majobroom.client.renderer.armor.MajoBootsRenderer;
-import dev.polaris_light.majobroom.client.renderer.armor.MajoClothRenderer;
-import dev.polaris_light.majobroom.client.renderer.armor.MajoHatRenderer;
-import dev.polaris_light.majobroom.client.renderer.armor.MajoStockingRenderer;
 import dev.polaris_light.majobroom.client.renderer.entity.BroomGeoRenderer;
 import dev.polaris_light.majobroom.init.ModEntities;
-import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.client.tooltip.TooltipModifier;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-import org.jetbrains.annotations.NotNull;
-import java.util.function.Supplier;
 /**
  * 客户端事件处理
  * 注册实体渲染器、按键绑定和 Tooltip

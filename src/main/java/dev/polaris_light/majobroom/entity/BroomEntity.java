@@ -1,6 +1,7 @@
 package dev.polaris_light.majobroom.entity;
 
 import dev.polaris_light.majobroom.client.input.KeyBindings;
+import dev.polaris_light.majobroom.common.PerspectiveMode;
 import dev.polaris_light.majobroom.compat.CompatManager;
 import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.item.armor.MajoHatItem;
@@ -8,9 +9,11 @@ import dev.polaris_light.majobroom.item.armor.MajoClothItem;
 import dev.polaris_light.majobroom.item.armor.MajoStockingItem;
 import dev.polaris_light.majobroom.item.armor.MajoBootsItem;
 import dev.polaris_light.majobroom.network.packet.BroomInputPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -26,19 +29,24 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.object.PlayState;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * 扫帚实体 - 简化版，参考Hexerei和原版船的设计
@@ -117,7 +125,9 @@ public class BroomEntity extends Entity implements GeoEntity {
     // ============ GeckoLib 接口实现 ============
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // 不注册动画控制器 - 浮动效果在渲染器中应用
+        // GeckoLib 5.4.5 requires a valid manager during render-state extraction.
+        // Register a no-op controller so manager/controller state is always initialized.
+        controllers.add(new AnimationController<>("broom", animationTest -> PlayState.STOP));
     }
     
     @Override
@@ -154,15 +164,15 @@ public class BroomEntity extends Entity implements GeoEntity {
         // 处理位置同步插值（参考原版船的tickLerp）
         tickLerp();
         
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             updateMajoArmorStatus();
         }
 
 
         // 本地控制时处理运动（参考原版船的isControlledByLocalInstance）
-        if (this.isControlledByLocalInstance()) {
+        if (this.isLocalInstanceAuthoritative()) {
             // 客户端：读取输入并发送网络包
-            if (this.level().isClientSide) {
+            if (this.level().isClientSide()) {
                 readAndSendInputs();
             }
             
@@ -186,7 +196,7 @@ public class BroomEntity extends Entity implements GeoEntity {
      */
     private void tickLerp() {
         // 如果本地控制，清空插值（使用客户端预测）
-        if (this.isControlledByLocalInstance()) {
+        if (this.isLocalInstanceAuthoritative()) {
             this.lerpSteps = 0;
             this.syncPacketPositionCodec(this.getX(), this.getY(), this.getZ());
         }
@@ -226,7 +236,6 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
     
     // ============ 输入处理（客户端，每tick发送，参考原版船） ============
-    @OnlyIn(Dist.CLIENT)
     private void readAndSendInputs() {
         Entity rider = getFirstPassenger();
         if (!(rider instanceof LocalPlayer player)) {
@@ -234,14 +243,14 @@ public class BroomEntity extends Entity implements GeoEntity {
         }
         
         // 读取Minecraft原生输入
-        this.inputLeft = player.input.left;
-        this.inputRight = player.input.right;
-        this.inputUp = player.input.up;
-        this.inputDown = player.input.down;
+        this.inputLeft = player.input.keyPresses.left();
+        this.inputRight = player.input.keyPresses.right();
+        this.inputUp = player.input.keyPresses.forward();
+        this.inputDown = player.input.keyPresses.backward();
         
         // 读取自定义按键
-        this.inputForward = player.input.jumping;  // Space/Jump
-        this.inputBack = KeyBindings.FLY_DOWN.isDown();  // Ctrl
+        this.inputForward = player.input.keyPresses.jump();  // Space/Jump
+        this.inputBack = KeyBindings.FLY_DOWN.get().isDown();  // Ctrl
         
         // 检测刹车键（Shift）- 注意：这里直接读取shift键状态
         Minecraft mc = Minecraft.getInstance();
@@ -259,7 +268,7 @@ public class BroomEntity extends Entity implements GeoEntity {
         );
         
         // 发送统一的输入包到服务端（每tick都发送）
-        PacketDistributor.sendToServer(new BroomInputPayload(this.getId(), flags));
+        ClientPacketDistributor.sendToServer(new BroomInputPayload(this.getId(), flags));
     }
     
     // ============ 运动计算（类似船） ============
@@ -445,41 +454,41 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
     
     // ============ 位置同步（客户端接收服务端位置） ============
-    @Override
-    public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
-        this.lerpX = x;
-        this.lerpY = y;
-        this.lerpZ = z;
-        this.lerpYRot = yRot;
-        this.lerpXRot = xRot;
-        this.lerpSteps = 10; // 10步平滑插值
-    }
+    // @Override
+    // public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
+    //     this.lerpX = x;
+    //     this.lerpY = y;
+    //     this.lerpZ = z;
+    //     this.lerpYRot = yRot;
+    //     this.lerpXRot = xRot;
+    //     this.lerpSteps = 10; // 10步平滑插值
+    // }
     
     // ============ 插值目标位置（1.21.1新增，用于客户端渲染） ============
-    @Override
-    public double lerpTargetX() {
-        return this.lerpSteps > 0 ? this.lerpX : this.getX();
-    }
+    // @Override
+    // public double lerpTargetX() {
+    //     return this.lerpSteps > 0 ? this.lerpX : this.getX();
+    // }
     
-    @Override
-    public double lerpTargetY() {
-        return this.lerpSteps > 0 ? this.lerpY : this.getY();
-    }
+    // @Override
+    // public double lerpTargetY() {
+    //     return this.lerpSteps > 0 ? this.lerpY : this.getY();
+    // }
     
-    @Override
-    public double lerpTargetZ() {
-        return this.lerpSteps > 0 ? this.lerpZ : this.getZ();
-    }
+    // @Override
+    // public double lerpTargetZ() {
+    //     return this.lerpSteps > 0 ? this.lerpZ : this.getZ();
+    // }
     
-    @Override
-    public float lerpTargetXRot() {
-        return this.lerpSteps > 0 ? (float)this.lerpXRot : this.getXRot();
-    }
+    // @Override
+    // public float lerpTargetXRot() {
+    //     return this.lerpSteps > 0 ? (float)this.lerpXRot : this.getXRot();
+    // }
     
-    @Override
-    public float lerpTargetYRot() {
-        return this.lerpSteps > 0 ? (float)this.lerpYRot : this.getYRot();
-    }
+    // @Override
+    // public float lerpTargetYRot() {
+    //     return this.lerpSteps > 0 ? (float)this.lerpYRot : this.getYRot();
+    // }
     
     // ============ 服务端输入接收 ============
     /**
@@ -504,8 +513,8 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
 
     @Override
-    public void positionRider(@Nonnull Entity passenger, 
-                              @Nonnull MoveFunction moveFunction) {
+    public void positionRider(Entity passenger, 
+                              MoveFunction moveFunction) {
         if (hasPassenger(passenger)) {
             // 应用浮动偏移
             double yOffset = this.getPassengersRidingOffset() + floatOffset;
@@ -552,12 +561,12 @@ public class BroomEntity extends Entity implements GeoEntity {
      * 当乘客转头时调用（参考原版船）
      */
     @Override
-    public void onPassengerTurned(@Nonnull Entity passenger) {
+    public void onPassengerTurned(Entity passenger) {
         this.clampRotation(passenger);
     }
     
     @Override
-    protected void removePassenger(@Nonnull Entity passenger) {
+    protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
         
         // 清空输入状态
@@ -570,16 +579,16 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
     
     @Override
-    public @Nonnull InteractionResult interact(
-            @Nonnull Player player, 
-            @Nonnull InteractionHand hand) {
+        public InteractionResult interact(
+            Player player, 
+            InteractionHand hand) {
         // 玩家按住Shift时不上扫帚（用于其他交互，比如打开GUI等）
         if (player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
         
         // 客户端：告诉服务端要处理这个交互
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         
@@ -618,9 +627,9 @@ public class BroomEntity extends Entity implements GeoEntity {
      * 处理玩家攻击扫帚：当玩家按住Shift键并左键攻击时，回收扫帚物品
      */
     @Override
-    public boolean hurt(@javax.annotation.Nonnull DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         // 如果扫帚已经被移除或处于无敌状态，拒绝伤害
-        if (this.isRemoved() || this.isInvulnerableTo(source)) {
+        if (this.isInvulnerableToBase(source)) {
             return false;
         }
         
@@ -630,7 +639,7 @@ public class BroomEntity extends Entity implements GeoEntity {
             // 检查玩家是否按住Shift键
             if (player.isShiftKeyDown()) {
                 // 仅在服务端处理
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     // 播放音效
                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                             SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -667,33 +676,24 @@ public class BroomEntity extends Entity implements GeoEntity {
     
     // ============ 数据持久化 ============
     @Override
-    protected void readAdditionalSaveData(@Nonnull CompoundTag tag) {
-        if (tag.contains("SpeedModifier")) {
-            entityData.set(SPEED_MODIFIER, tag.getFloat("SpeedModifier"));
-        }
-        
+    protected void readAdditionalSaveData(ValueInput tag) {
+        entityData.set(SPEED_MODIFIER, tag.getFloatOr("SpeedModifier", entityData.get(SPEED_MODIFIER)));
+
         // 读取配置到EntityData
-        if (tag.contains("AutoPerspective")) {
-            entityData.set(AUTO_PERSPECTIVE, tag.getBoolean("AutoPerspective") ? (byte) 1 : (byte) 0);
-        }
-        if (tag.contains("SidewaysSitting")) {
-            entityData.set(SIDEWAYS_SITTING, tag.getBoolean("SidewaysSitting") ? (byte) 1 : (byte) 0);
-        }
-        if (tag.contains("AutoHover")) {
-            entityData.set(AUTO_HOVER, tag.getBoolean("AutoHover") ? (byte) 1 : (byte) 0);
-        }
-        if (tag.contains("SpeedPercent")) {
-            entityData.set(SPEED_PERCENT, tag.getInt("SpeedPercent"));
-        }
-        
+        entityData.set(AUTO_PERSPECTIVE, tag.getBooleanOr("AutoPerspective", isAutoPerspective()) ? (byte) 1 : (byte) 0);
+        entityData.set(SIDEWAYS_SITTING, tag.getBooleanOr("SidewaysSitting", isSidewaysSitting()) ? (byte) 1 : (byte) 0);
+        entityData.set(AUTO_HOVER, tag.getBooleanOr("AutoHover", isAutoHover()) ? (byte) 1 : (byte) 0);
+        setSpeedPercent(tag.getIntOr("SpeedPercent", getSpeedPercent()));
+        setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(
+            tag.getIntOr("PerspectiveMode", getPerspectiveMode().ordinal())
+        ));
+
         // 读取来源背包 UUID
-        if (tag.hasUUID("SourceBackpackUUID")) {
-            this.sourceBackpackUUID = tag.getUUID("SourceBackpackUUID");
-        }
+        tag.read("SourceBackpackUUID", UUIDUtil.CODEC).ifPresent(uuid -> this.sourceBackpackUUID = uuid);
     }
     
     @Override
-    protected void addAdditionalSaveData(@Nonnull CompoundTag tag) {
+    protected void addAdditionalSaveData(ValueOutput tag) {
         tag.putFloat("SpeedModifier", entityData.get(SPEED_MODIFIER));
         
         // 保存配置
@@ -701,10 +701,11 @@ public class BroomEntity extends Entity implements GeoEntity {
         tag.putBoolean("SidewaysSitting", entityData.get(SIDEWAYS_SITTING) != 0);
         tag.putBoolean("AutoHover", entityData.get(AUTO_HOVER) != 0);
         tag.putInt("SpeedPercent", entityData.get(SPEED_PERCENT));
+        tag.putInt("PerspectiveMode", entityData.get(PERSPECTIVE_MODE));
         
         // 保存来源背包 UUID
         if (this.sourceBackpackUUID != null) {
-            tag.putUUID("SourceBackpackUUID", this.sourceBackpackUUID);
+            tag.store("SourceBackpackUUID", UUIDUtil.CODEC, this.sourceBackpackUUID);
         }
     }
     
@@ -769,15 +770,15 @@ public class BroomEntity extends Entity implements GeoEntity {
         entityData.set(SPEED_PERCENT, clamped);
     }
     
-    public dev.polaris_light.majobroom.common.PerspectiveMode getPerspectiveMode() {
-        return dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(entityData.get(PERSPECTIVE_MODE));
+    public PerspectiveMode getPerspectiveMode() {
+        return PerspectiveMode.fromOrdinal(entityData.get(PERSPECTIVE_MODE));
     }
     
     public boolean isWearingMajoArmor() {
         return this.entityData.get(WEARING_MAJO_ARMOR) != 0;
     }
     
-    public void setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode mode) {
+    public void setPerspectiveMode(PerspectiveMode mode) {
         entityData.set(PERSPECTIVE_MODE, mode.ordinal());
     }
     
@@ -794,19 +795,19 @@ public class BroomEntity extends Entity implements GeoEntity {
         if (tag.isEmpty()) return;
         
         if (tag.contains("AutoPerspective")) {
-            setAutoPerspective(tag.getBoolean("AutoPerspective"));
+            setAutoPerspective(tag.getBoolean("AutoPerspective").orElse(false));
         }
         if (tag.contains("SidewaysSitting")) {
-            setSidewaysSitting(tag.getBoolean("SidewaysSitting"));
+            setSidewaysSitting(tag.getBoolean("SidewaysSitting").orElse(false));
         }
         if (tag.contains("AutoHover")) {
-            setAutoHover(tag.getBoolean("AutoHover"));
+            setAutoHover(tag.getBoolean("AutoHover").orElse(false));
         }
         if (tag.contains("SpeedPercent")) {
-            setSpeedPercent(tag.getInt("SpeedPercent"));
+            setSpeedPercent(tag.getInt("SpeedPercent").orElse(70));
         }
         if (tag.contains("PerspectiveMode")) {
-            setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(tag.getInt("PerspectiveMode")));
+            setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(tag.getInt("PerspectiveMode").orElse(2)));
         }
     }
     
@@ -822,8 +823,7 @@ public class BroomEntity extends Entity implements GeoEntity {
         tag.putInt("PerspectiveMode", getPerspectiveMode().ordinal());
         
         // 使用新的DataComponents API保存数据
-        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-            net.minecraft.world.item.component.CustomData.of(tag));
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
     
     /**
@@ -842,7 +842,6 @@ public class BroomEntity extends Entity implements GeoEntity {
 
     
     // ============ 基础属性 ============
-    @Override
     public boolean canBeCollidedWith() {
         return true;
     }
@@ -859,15 +858,13 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
     
     @Override
-    protected boolean canRide(@Nonnull Entity vehicle) {
+    protected boolean canRide(Entity vehicle) {
         return false;
     }
 
     // ============ 摔落伤害保护 ============
     @Override
-    protected void checkFallDamage(double y, boolean onGround, 
-                                   @javax.annotation.Nonnull net.minecraft.world.level.block.state.BlockState state, 
-                                   @javax.annotation.Nonnull net.minecraft.core.BlockPos pos) {
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
         // 扫帚不受摔落伤害（参考原版船）
         this.resetFallDistance();
     }

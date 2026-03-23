@@ -1,8 +1,10 @@
 package dev.polaris_light.majobroom.client.tooltip;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,9 +93,15 @@ public record ItemDescription(ImmutableList<Component> lines,
      * 根据当前按键状态获取对应的行
      */
     public ImmutableList<Component> getCurrentLines() {
-        if (Screen.hasShiftDown()) {
+        Window window = Minecraft.getInstance().getWindow();
+        boolean shiftDown = InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT)
+            || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+        boolean ctrlDown = InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
+            || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+
+        if (shiftDown) {
             return linesOnShift;
-        } else if (Screen.hasControlDown()) {
+        } else if (ctrlDown) {
             return linesOnCtrl;
         } else {
             return lines;

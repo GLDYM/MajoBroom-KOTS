@@ -6,10 +6,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.Objects;
 
 /**
  * 扫帚配置同步数据包
@@ -24,7 +26,7 @@ public record BroomConfigPayload(
 ) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<BroomConfigPayload> TYPE = 
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "broom_config"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom_config"));
     
     public static final StreamCodec<ByteBuf, BroomConfigPayload> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.INT,
@@ -37,8 +39,22 @@ public record BroomConfigPayload(
         BroomConfigPayload::autoHover,
         ByteBufCodecs.INT,
         BroomConfigPayload::speedPercent,
-        BroomConfigPayload::new
+        BroomConfigPayload::fromCodec
     );
+
+    private static BroomConfigPayload fromCodec(Integer broomEntityId,
+                                                Integer perspectiveModeOrdinal,
+                                                Boolean sidewaysSitting,
+                                                Boolean autoHover,
+                                                Integer speedPercent) {
+        return new BroomConfigPayload(
+            Objects.requireNonNull(broomEntityId, "broomEntityId"),
+            Objects.requireNonNull(perspectiveModeOrdinal, "perspectiveModeOrdinal"),
+            Objects.requireNonNull(sidewaysSitting, "sidewaysSitting"),
+            Objects.requireNonNull(autoHover, "autoHover"),
+            Objects.requireNonNull(speedPercent, "speedPercent")
+        );
+    }
     
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {

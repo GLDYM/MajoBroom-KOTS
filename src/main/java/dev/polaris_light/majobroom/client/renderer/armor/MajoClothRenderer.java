@@ -1,18 +1,20 @@
 package dev.polaris_light.majobroom.client.renderer.armor;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.item.armor.MajoClothItem;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.model.DefaultedItemGeoModel;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.world.entity.Pose;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.renderer.base.BoneSnapshots;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+
+import java.util.Map;
+import java.util.Objects;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
 /**
  * 魔女长袍的 GeckoLib 渲染器
@@ -20,53 +22,56 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
  * - dress 的旋转由左右腿的平均旋转决定
  * - 在骑乘状态下隐藏 sithide1 和 sithide2 节点
  */
-public class MajoClothRenderer extends GeoArmorRenderer<MajoClothItem> {
-    public MajoClothRenderer() {
-        super(new DefaultedItemGeoModel<>(
-            ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "armor/majo_cloth")
-        ));
+public class MajoClothRenderer extends GeoArmorRenderer<MajoClothItem, MajoClothRenderer.ClothRenderState> {
+    public MajoClothRenderer(MajoClothItem item) {
+        super(item);
     }
 
     /**
-     * 在渲染前处理 dress 节点的特殊运动逻辑
+     * 在渲染前处理 dress 节点的特殊运动逻辑。
+     * 按用户要求保留 preRender 入口，由 GeckoLib 5 的 adjustModelBonesForRender 调用。
      */
     @Override
-    public void preRender(PoseStack poseStack, MajoClothItem animatable, BakedGeoModel model,
-                          @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-                          boolean isReRender, float partialTick, int packedLight, int packedOverlay,
-                          int colour) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick,
-                packedLight, packedOverlay, colour);
+    public void adjustModelBonesForRender(RenderPassInfo<ClothRenderState> renderPassInfo, BoneSnapshots snapshots) {
+        super.adjustModelBonesForRender(renderPassInfo, snapshots);
+        preRender(renderPassInfo, snapshots);
+    }
+
+    /**
+     * preRender 逻辑入口（GeckoLib 5 版本）
+     */
+    public void preRender(RenderPassInfo<ClothRenderState> renderPassInfo, BoneSnapshots snapshots) {
+        HumanoidModel<?> baseModel = Objects.requireNonNull(renderPassInfo.getGeckolibData(DataTickets.HUMANOID_MODEL));
+        Pose pose = renderPassInfo.getGeckolibData(DataTickets.ENTITY_POSE);
+        boolean isRiding = pose == Pose.SITTING;
 
         // 处理 dress 节点的特殊运动
-        GeoBone dressBone = this.model.getBone("dress").orElse(null);
-        if (dressBone != null && this.baseModel != null) {
-            ModelPart leftLeg = this.baseModel.leftLeg;
-            ModelPart rightLeg = this.baseModel.rightLeg;
+        ModelPart leftLeg = baseModel.leftLeg;
+        ModelPart rightLeg = baseModel.rightLeg;
 
+        snapshots.ifPresent("dress", dress -> {
             // dress 的 X 轴旋转是左右腿旋转的平均值
-            dressBone.setRotX(-(leftLeg.xRot + rightLeg.xRot) / 2.0f);
-            
+            dress.setRotX(-(leftLeg.xRot + rightLeg.xRot) / 2.0f);
+
             // dress 的 Z 轴位置跟随左腿
-            dressBone.setPosZ(leftLeg.z);
-            
+            dress.setTranslateZ(leftLeg.z);
 
-            // 获取当前实体并检查是否在骑乘
-            Entity entity = getCurrentEntity();
-            boolean isRiding = entity != null && entity.isPassenger();
-
+            // 骑乘状态：固定旋转角度
             if (isRiding) {
-                // 骑乘状态：固定旋转角度
-                dressBone.setRotX(1.04f);
-                
-                // 隐藏 sithide1 和 sithide2 节点
-                this.model.getBone("sithide1").ifPresent(bone -> bone.setHidden(true));
-                this.model.getBone("sithide2").ifPresent(bone -> bone.setHidden(true));
-            } else {
-                // 非骑乘状态：显示 sithide 节点
-                this.model.getBone("sithide1").ifPresent(bone -> bone.setHidden(false));
-                this.model.getBone("sithide2").ifPresent(bone -> bone.setHidden(false));
+                dress.setRotX(1.04f);
             }
+        });
+
+        snapshots.ifPresent("sithide1", bone -> bone.skipRender(isRiding));
+        snapshots.ifPresent("sithide2", bone -> bone.skipRender(isRiding));
+    }
+
+    public static class ClothRenderState extends HumanoidRenderState implements GeoRenderState {
+        private final Map<DataTicket<?>, Object> dataMap = new Reference2ObjectOpenHashMap<>();
+
+        @Override
+        public Map<DataTicket<?>, Object> getDataMap() {
+            return this.dataMap;
         }
     }
 }

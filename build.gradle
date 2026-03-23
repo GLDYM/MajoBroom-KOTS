@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.115'
+    id 'net.neoforged.moddev' version '2.0.140'
     id 'idea'
 }
 
@@ -30,7 +30,7 @@ base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.
+// Mojang ships Java 21 to end users in 1.21.11, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
@@ -119,7 +119,7 @@ configurations {
 dependencies {
     // GeckoLib dependency
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

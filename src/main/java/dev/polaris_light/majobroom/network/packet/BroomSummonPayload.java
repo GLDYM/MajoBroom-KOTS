@@ -8,7 +8,7 @@ import dev.polaris_light.majobroom.init.ModItems;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record BroomSummonPayload() implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<BroomSummonPayload> TYPE = 
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "broom_summon"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom_summon"));
     
     public static final StreamCodec<ByteBuf, BroomSummonPayload> STREAM_CODEC = 
         StreamCodec.unit(new BroomSummonPayload());

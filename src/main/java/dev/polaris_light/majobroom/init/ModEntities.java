@@ -2,6 +2,8 @@ package dev.polaris_light.majobroom.init;
 
 import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.entity.BroomEntity;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -21,7 +23,7 @@ public final class ModEntities {
                     .of(BroomEntity::new, MobCategory.MISC)
                     .sized(1.0F, 0.5F)
                     .clientTrackingRange(10)
-                    .build("broom")
+                .build(ResourceKey.create(BuiltInRegistries.ENTITY_TYPE.key(), Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom")))
     );
 
     public static void register(IEventBus modEventBus) {

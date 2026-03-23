@@ -6,15 +6,9 @@
     "pgp"
   ],
   "key": {
-    "p": {
-      "item": "minecraft:purple_wool"
-    },
-    "g": {
-      "item": "minecraft:gold_ingot"
-    },
-    "m": {
-      "item": "minecraft:white_wool"
-    }
+    "p": "minecraft:purple_wool",
+    "g": "minecraft:gold_ingot",
+    "m": "minecraft:white_wool"
   },
   "result": {
     "id": "majobroom:majo_cloth",

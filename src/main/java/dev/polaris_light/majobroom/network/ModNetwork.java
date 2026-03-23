@@ -6,7 +6,6 @@ import dev.polaris_light.majobroom.network.packet.BroomDismountPayload;
 import dev.polaris_light.majobroom.network.packet.BroomInputPayload;
 import dev.polaris_light.majobroom.network.packet.BroomSummonPayload;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;

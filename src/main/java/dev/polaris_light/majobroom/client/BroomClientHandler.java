@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
@@ -29,7 +28,7 @@ public final class BroomClientHandler {
         }
         
         // 仅客户端处理
-        if (!event.getLevel().isClientSide) {
+        if (!event.getLevel().isClientSide()) {
             return;
         }
         

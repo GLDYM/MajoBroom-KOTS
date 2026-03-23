@@ -4,10 +4,8 @@ import java.util.EnumMap;
 
 import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.item.armor.MajoArmorMaterials;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;

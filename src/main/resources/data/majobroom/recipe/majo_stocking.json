@@ -6,9 +6,7 @@
     "m m"
   ],
   "key": {
-    "m": {
-      "item": "minecraft:white_wool"
-    }
+    "m": "minecraft:white_wool"
   },
   "result": {
     "id": "majobroom:majo_stocking",

@@ -12,11 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * 客户端输入处理器（简化版）
@@ -55,12 +55,12 @@ public final class InputHandler {
         if (player == null) return;
 
         // 处理召唤/收回扫帚
-        if (KeyBindings.SUMMON_BROOM.consumeClick()) {
-            PacketDistributor.sendToServer(new BroomSummonPayload());
+        if (KeyBindings.SUMMON_BROOM.get().consumeClick()) {
+            ClientPacketDistributor.sendToServer(new BroomSummonPayload());
         }
 
         // 处理打开配置界面（仅在骑乘扫帚时）
-        if (KeyBindings.OPEN_CONFIG.consumeClick()) {
+        if (KeyBindings.OPEN_CONFIG.get().consumeClick()) {
             if (player.getVehicle() instanceof BroomEntity broom) {
                 SimpleScreenOpener.open(new BroomConfigScreen(broom));
             }
@@ -82,7 +82,7 @@ public final class InputHandler {
                 
                 // 当达到要求时间时，发送下马包
                 if (shiftPressedTicks == REQUIRED_HOLD_TICKS) {
-                    PacketDistributor.sendToServer(new BroomDismountPayload(broom.getId()));
+                    ClientPacketDistributor.sendToServer(new BroomDismountPayload(broom.getId()));
                 }
             } else {
                 // 松开shift键，检查是否按的时间不够

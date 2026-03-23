@@ -6,10 +6,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.Objects;
 
 /**
  * 扫帚下马数据包
@@ -20,13 +22,17 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record BroomDismountPayload(int entityId) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<BroomDismountPayload> TYPE = 
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "broom_dismount"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom_dismount"));
     
     public static final StreamCodec<ByteBuf, BroomDismountPayload> STREAM_CODEC = StreamCodec.composite(
         ByteBufCodecs.VAR_INT,
         BroomDismountPayload::entityId,
-        BroomDismountPayload::new
+        BroomDismountPayload::fromCodec
     );
+
+    private static BroomDismountPayload fromCodec(Integer entityId) {
+        return new BroomDismountPayload(Objects.requireNonNull(entityId, "entityId"));
+    }
     
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {

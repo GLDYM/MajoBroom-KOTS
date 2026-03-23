@@ -1,7 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.util;
 
 import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * 键盘和鼠标输入工具类
@@ -14,10 +13,13 @@ public class AllKeys {
      * @param button 鼠标按钮 (0=左键, 1=右键, 2=中键)
      */
     public static boolean isMouseButtonDown(int button) {
-        return GLFW.glfwGetMouseButton(
-            Minecraft.getInstance().getWindow().getWindow(), 
-            button
-        ) == GLFW.GLFW_PRESS;
+        var mouseHandler = Minecraft.getInstance().mouseHandler;
+        return switch (button) {
+            case 0 -> mouseHandler.isLeftPressed();
+            case 1 -> mouseHandler.isRightPressed();
+            case 2 -> mouseHandler.isMiddlePressed();
+            default -> false;
+        };
     }
 }
 

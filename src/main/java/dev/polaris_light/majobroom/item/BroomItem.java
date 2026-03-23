@@ -21,7 +21,7 @@ public class BroomItem extends Item {
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.PASS;
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             double x = pos.getX() + 0.5;
             double y = pos.getY() + 1.0;
             double z = pos.getZ() + 0.5;
@@ -43,7 +43,7 @@ public class BroomItem extends Item {
                 context.getItemInHand().shrink(1);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 }
 

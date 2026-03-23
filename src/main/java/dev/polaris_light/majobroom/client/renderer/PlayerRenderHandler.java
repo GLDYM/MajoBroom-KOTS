@@ -2,6 +2,8 @@ package dev.polaris_light.majobroom.client.renderer;
 
 import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.entity.BroomEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -24,8 +26,19 @@ public class PlayerRenderHandler {
      * 这里不需要额外操作，玩家会自动跟随扫帚浮动
      */
     @SubscribeEvent
-    public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
+    public static void onRenderPlayerPre(RenderPlayerEvent.Pre<?> event) {
+        AvatarRenderState renderState = event.getRenderState();
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.level == null) {
+            return;
+        }
+
+        Entity entity = mc.level.getEntity(renderState.id);
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
         Entity vehicle = player.getVehicle();
 
         // 玩家骑乘扫帚时，坐标已由服务端更新，无需额外处理

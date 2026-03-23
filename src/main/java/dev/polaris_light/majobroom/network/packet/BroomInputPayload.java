@@ -6,10 +6,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.Objects;
 
 /**
  * 扫帚输入控制网络包（完整的6方向输入）
@@ -18,7 +20,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record BroomInputPayload(int entityId, byte flags) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<BroomInputPayload> TYPE = 
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "broom_input"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom_input"));
     
     // flags 位标志（7位）:
     // bit 0 (0x01): 左转 (A)
@@ -34,8 +36,15 @@ public record BroomInputPayload(int entityId, byte flags) implements CustomPacke
         BroomInputPayload::entityId,
         ByteBufCodecs.BYTE,
         BroomInputPayload::flags,
-        BroomInputPayload::new
+        BroomInputPayload::fromCodec
     );
+
+    private static BroomInputPayload fromCodec(Integer entityId, Byte flags) {
+        return new BroomInputPayload(
+            Objects.requireNonNull(entityId, "entityId"),
+            Objects.requireNonNull(flags, "flags")
+        );
+    }
     
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {

@@ -1,6 +1,5 @@
 package dev.polaris_light.majobroom.client.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.polaris_light.majobroom.client.gui.base.BaseWidget;
 import dev.polaris_light.majobroom.client.gui.base.RenderElement;
 import dev.polaris_light.majobroom.client.gui.texture.GuiTextures;
@@ -45,15 +44,13 @@ public class IconButton extends BaseWidget {
                     : isHovered ? GuiTextures.BUTTON_HOVER
                         : green ? GuiTextures.BUTTON_GREEN : GuiTextures.BUTTON;
 
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             drawBg(graphics, button);
             icon.render(graphics, getX() + 1, getY() + 1);
         }
     }
 
     protected void drawBg(GuiGraphics graphics, GuiTextures button) {
-        graphics.blit(button.getLocation(), getX(), getY(), button.getStartX(), button.getStartY(), 
-            button.getWidth(), button.getHeight());
+        button.render(graphics, getX(), getY());
     }
 
     public void setToolTip(Component text) {

@@ -8,7 +8,6 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.List;
  * 
  * NeoForge 1.21.1 不再使用 LazyOptional，而是直接使用 BackpackWrapper.fromStack()
  */
+@SuppressWarnings("removal")
 class BackpackCompat {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackpackCompat.class);
     
@@ -99,7 +99,7 @@ class BackpackCompat {
      * @return 背包的 UUID，如果无法获取则返回 null
      */
     @Nullable
-    java.util.UUID getBackpackUUID(@Nonnull ItemStack backpackStack) {
+    java.util.UUID getBackpackUUID(ItemStack backpackStack) {
         if (!isBackpackItem(backpackStack)) {
             return null;
         }
@@ -123,8 +123,7 @@ class BackpackCompat {
     /**
      * 从玩家装备的背包中移除指定物品
      */
-    @Nonnull
-    FindResult removeItemFromBackpack(@Nonnull ServerPlayer player, @Nonnull Item item) {
+    FindResult removeItemFromBackpack(ServerPlayer player, Item item) {
         FindResult result = forEachBackpack(player, backpackStack -> {
             ItemStack extracted = extractFromBackpack(backpackStack, item);
             return extracted.isEmpty() ? null : new FindResult(extracted, getBackpackUUID(backpackStack));
@@ -135,8 +134,7 @@ class BackpackCompat {
     /**
      * 在玩家装备的所有背包中查找物品
      */
-    @Nonnull
-    FindResult findItemWithSource(@Nonnull ServerPlayer player, @Nonnull Item item) {
+    FindResult findItemWithSource(ServerPlayer player, Item item) {
         FindResult result = forEachBackpack(player, backpackStack -> {
             ItemStack found = findInBackpack(backpackStack, item);
             return found.isEmpty() ? null : new FindResult(found, getBackpackUUID(backpackStack));
@@ -147,7 +145,7 @@ class BackpackCompat {
     /**
      * 按 UUID 查找玩家身上的背包并存储物品
      */
-    boolean storeItemToBackpackByUUID(@Nonnull ServerPlayer player, @Nonnull java.util.UUID backpackUUID, @Nonnull ItemStack stack) {
+    boolean storeItemToBackpackByUUID(ServerPlayer player, java.util.UUID backpackUUID, ItemStack stack) {
         if (stack.isEmpty() || backpackUUID == null) {
             return false;
         }
@@ -169,9 +167,9 @@ class BackpackCompat {
      * @return 处理函数的返回值
      */
     @Nullable
-    private <T> T forEachBackpack(@Nonnull ServerPlayer player, @Nonnull BackpackProcessor<T> processor) {
+    private <T> T forEachBackpack(ServerPlayer player, BackpackProcessor<T> processor) {
         try {
-            // 1. 胸甲槽
+            // 1. 胸甲槽        
             ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
             if (isBackpackItem(chestStack)) {
                 T result = processor.process(chestStack);
@@ -181,7 +179,7 @@ class BackpackCompat {
             }
             
             // 2. 主物品栏
-            for (ItemStack stack : player.getInventory().items) {
+            for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
                 if (isBackpackItem(stack)) {
                     T result = processor.process(stack);
                     if (result != null) {
@@ -232,7 +230,6 @@ class BackpackCompat {
      * @param item 要提取的物品
      * @return 提取的物品堆栈，如果没找到则返回空
      */
-    @Nonnull
     private ItemStack extractFromBackpack(ItemStack backpackStack, Item item) {
         if (!isBackpackItem(backpackStack)) {
             return ItemStack.EMPTY;
@@ -260,7 +257,6 @@ class BackpackCompat {
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
     private ItemStack findInBackpack(ItemStack backpackStack, Item item) {
         if (!isBackpackItem(backpackStack)) {
             return ItemStack.EMPTY;

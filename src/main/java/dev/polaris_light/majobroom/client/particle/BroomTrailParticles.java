@@ -11,7 +11,7 @@ public final class BroomTrailParticles {
     private static int counter = 0;
 
     public static void spawn(Level level, Vec3 pos) {
-        if (!level.isClientSide) return;
+        if (!level.isClientSide()) return;
         
         // 直接启用粒子效果，不再检查配置
         // 使用默认的中等质量（interval=3）

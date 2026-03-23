@@ -1,15 +1,25 @@
 package dev.polaris_light.majobroom.client.renderer.armor;
 
-import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.item.armor.MajoBootsItem;
-import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.model.DefaultedItemGeoModel;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
-public class MajoBootsRenderer extends GeoArmorRenderer<MajoBootsItem> {
-    public MajoBootsRenderer() {
-        super(new DefaultedItemGeoModel<>(
-            ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "armor/majo_boots")
-        ));
+import java.util.Map;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+
+public class MajoBootsRenderer extends GeoArmorRenderer<MajoBootsItem, MajoBootsRenderer.BootsRenderState> {
+    public MajoBootsRenderer(MajoBootsItem item) {
+        super(item);
+    }
+
+    public static class BootsRenderState extends HumanoidRenderState implements GeoRenderState {
+        private final Map<DataTicket<?>, Object> dataMap = new Reference2ObjectOpenHashMap<>();
+
+        @Override
+        public Map<DataTicket<?>, Object> getDataMap() {
+            return this.dataMap;
+        }
     }
 }

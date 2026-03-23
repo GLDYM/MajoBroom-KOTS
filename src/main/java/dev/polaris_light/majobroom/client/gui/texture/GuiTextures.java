@@ -1,8 +1,8 @@
 package dev.polaris_light.majobroom.client.gui.texture;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 
 /**
  * GUI 纹理管理枚举
@@ -28,11 +28,12 @@ public enum GuiTextures {
     VALUE_SETTINGS_CURSOR_RIGHT("value_settings.png", 61, 9, 3, 14),
     ;
 
-    public static final int TITLE_FONT_COLOR = 0x592424; // 蓝灰色   0x592424 深红棕色
-    public static final int CONTENT_FONT_COLOR = 0xb8b8b8; // 蓝灰色   0x592424 深红棕色
+    public static final int TITLE_FONT_COLOR = 0xFF592424; // ARGB: 不透明深红棕色
+    public static final int CONTENT_FONT_COLOR = 0xFFB8B8B8; // ARGB: 不透明浅灰色
     public static final String TEXTURES_PATH = "textures/gui/";
+    private static final int ATLAS_SIZE = 256;
 
-    private final ResourceLocation location;
+    private final Identifier location;
     private final int width, height;
     private final int startX, startY;
 
@@ -47,49 +48,55 @@ public enum GuiTextures {
      * 纹理图集构造（用于 widgets）
      */
     GuiTextures(String location, int startX, int startY, int width, int height) {
-        this.location = ResourceLocation.fromNamespaceAndPath("majobroom", TEXTURES_PATH + location);
+        this.location = Identifier.fromNamespaceAndPath("majobroom", TEXTURES_PATH + location);
         this.width = width;
         this.height = height;
         this.startX = startX;
         this.startY = startY;
     }
 
-    /**
-     * 绑定纹理
+    /** 
+     * 最诡异的一集
+     * public void blit(
+     *     RenderPipeline pipeline, 
+     *     Identifier atlas, 
+     *     int x, int y,  // 屏幕的起始点
+     *     float u, float v,  // uv 起始点，为什么是浮点？？？
+     *     int width, int height,  // 渲染区域的宽高
+     *     int uWidth, int vHeight,  // uv区域的宽高
+     *     int textureWidth, int textureHeight  // 整张贴图的宽高，用于归一化
+     * )
      */
-    public void bind() {
-        RenderSystem.setShaderTexture(0, location);
-    }
 
     /**
      * 渲染纹理
      */
     public void render(GuiGraphics graphics, int x, int y) {
-        graphics.blit(location, x, y, startX, startY, width, height);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, this.width, this.height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 渲染指定区域的纹理
      */
     public void render(GuiGraphics graphics, int x, int y, int startX, int startY, int width, int height) {
-        graphics.blit(location, x, y, startX, startY, width, height);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, startX, startY, width, height, width, height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 裁剪渲染（从纹理的startX, startY开始，渲染指定宽度和高度）
      */
     public void renderCropped(GuiGraphics graphics, int x, int y, int width, int height) {
-        graphics.blit(location, x, y, startX, startY, width, height);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, width, height, width, height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 拉伸渲染（将1x1或小纹理拉伸到指定宽度和高度）
      */
     public void renderStretched(GuiGraphics graphics, int x, int y, int width, int height) {
-        graphics.blit(location, x, y, width, height, startX, startY, this.width, this.height, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, width, height, this.width, this.height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
-    public ResourceLocation getLocation() {
+    public Identifier getLocation() {
         return location;
     }
 

@@ -5,9 +5,7 @@ import dev.polaris_light.majobroom.compat.CompatManager;
 import dev.polaris_light.majobroom.config.ServerConfig;
 import dev.polaris_light.majobroom.init.ModEntities;
 import dev.polaris_light.majobroom.init.ModItems;
-import dev.polaris_light.majobroom.network.ModNetwork;
 import dev.polaris_light.majobroom.init.ModCreativeTabs;
-import dev.polaris_light.majobroom.item.armor.MajoArmorMaterials;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -36,7 +34,6 @@ public class MajoBroom
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
 
-        MajoArmorMaterials.ARMOR_MATERIALS.register(modEventBus);
         ModEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
