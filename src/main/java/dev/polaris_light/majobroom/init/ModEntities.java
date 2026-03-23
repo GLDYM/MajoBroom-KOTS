@@ -22,7 +22,7 @@ public final class ModEntities {
             () -> EntityType.Builder
                     .of(BroomEntity::new, MobCategory.MISC)
                     .sized(1.0F, 0.5F)
-                    .clientTrackingRange(10)
+                    .clientTrackingRange(64)
                 .build(ResourceKey.create(BuiltInRegistries.ENTITY_TYPE.key(), Identifier.fromNamespaceAndPath(MajoBroom.MODID, "broom")))
     );
 

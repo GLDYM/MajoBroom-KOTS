@@ -1,14 +1,7 @@
 package dev.polaris_light.majobroom.config;
 
-import java.util.EnumMap;
-
 import dev.polaris_light.majobroom.MajoBroom;
-import dev.polaris_light.majobroom.item.armor.MajoArmorMaterials;
-import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 

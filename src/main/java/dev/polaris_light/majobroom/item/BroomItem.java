@@ -15,7 +15,7 @@ public class BroomItem extends Item {
     public BroomItem(Properties properties) { super(properties); }
 
     @Override
-    public @Nonnull InteractionResult useOn(@Nonnull UseOnContext context) {
+    public @Nonnull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();

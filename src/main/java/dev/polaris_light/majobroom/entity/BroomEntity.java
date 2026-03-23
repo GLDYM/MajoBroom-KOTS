@@ -3,6 +3,7 @@ package dev.polaris_light.majobroom.entity;
 import dev.polaris_light.majobroom.client.input.KeyBindings;
 import dev.polaris_light.majobroom.common.PerspectiveMode;
 import dev.polaris_light.majobroom.compat.CompatManager;
+import dev.polaris_light.majobroom.config.ServerConfig;
 import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.item.armor.MajoHatItem;
 import dev.polaris_light.majobroom.item.armor.MajoClothItem;
@@ -108,6 +109,10 @@ public class BroomEntity extends Entity implements GeoEntity {
     private boolean inputForward = false;  // 上升（Jump/Space）
     private boolean inputBack = false;     // 下降（Ctrl）
     private boolean inputBrake = false;    // 刹车（Shift）
+
+    // 客户端远端预测防抖：支撑面消失后的前几 tick 暂停预测，等待服务端校正
+    private boolean clientHadSupportLastTick = false;
+    private int clientPredictionPauseTicks = 0;
     
     // 来源背包 UUID（用于回收时放回原背包）
     @Nullable
@@ -168,24 +173,49 @@ public class BroomEntity extends Entity implements GeoEntity {
             updateMajoArmorStatus();
         }
 
+        boolean remoteClientUnridden = this.level().isClientSide()
+            && !isClientControlledByLocalPlayer()
+            && this.getControllingPassenger() == null;
 
-        // 本地控制时处理运动（参考原版船的isControlledByLocalInstance）
-        if (this.isLocalInstanceAuthoritative()) {
+        if (remoteClientUnridden) {
+            boolean hasSupport = hasSupportBelow();
+            if (this.clientHadSupportLastTick && !hasSupport) {
+                // 方块刚被破坏导致“开始下落”时，先停 2 tick 预测，避免先错后拉回
+                this.clientPredictionPauseTicks = 2;
+            }
+            this.clientHadSupportLastTick = hasSupport;
+        }
+
+        boolean allowRemotePredictionThisTick = !(remoteClientUnridden && this.clientPredictionPauseTicks > 0);
+        if (remoteClientUnridden && this.clientPredictionPauseTicks > 0) {
+            this.clientPredictionPauseTicks--;
+        }
+
+
+        // 运动模拟权限：
+        // - 服务端始终模拟（权威）
+        // - 客户端本地骑乘时模拟（预测）
+        // - 客户端无乘客时也模拟（两次同步包之间的连续运动）
+        boolean shouldSimulate = !this.level().isClientSide()
+            || isClientControlledByLocalPlayer()
+            || (remoteClientUnridden && allowRemotePredictionThisTick);
+        if (shouldSimulate) {
             // 客户端：读取输入并发送网络包
             if (this.level().isClientSide()) {
                 readAndSendInputs();
             }
             
-            // 两端都执行：运动计算和应用
+            // 两端都执行：先计算速度
             updateMotion();
-            move(MoverType.SELF, getDeltaMovement());
             
             if (this.getControllingPassenger() == null && !this.isAutoHover()) {
                 Vec3 motion = this.getDeltaMovement();
                 this.setDeltaMovement(motion.x, motion.y - 0.04D, motion.z);  // 应用重力
-                move(MoverType.SELF, getDeltaMovement());
-                applyGroundRepulsion();
             }
+
+            // 每 tick 只移动一次，避免多次积分导致视觉跳步
+            move(MoverType.SELF, getDeltaMovement());
+
             // 地面碰撞约束
             applyGroundRepulsion();
         }
@@ -195,10 +225,10 @@ public class BroomEntity extends Entity implements GeoEntity {
      * 处理位置同步插值（参考原版船）
      */
     private void tickLerp() {
-        // 如果本地控制，清空插值（使用客户端预测）
-        if (this.isLocalInstanceAuthoritative()) {
+        // 仅本地玩家骑乘时禁用插值（由客户端预测驱动）
+        if (isClientControlledByLocalPlayer()) {
             this.lerpSteps = 0;
-            this.syncPacketPositionCodec(this.getX(), this.getY(), this.getZ());
+            return;
         }
         
         // 如果有插值步数，执行平滑插值
@@ -214,6 +244,10 @@ public class BroomEntity extends Entity implements GeoEntity {
             this.setPos(x, y, z);
             this.setRot(this.getYRot(), this.getXRot());
         }
+    }
+
+    private boolean isClientControlledByLocalPlayer() {
+        return this.level().isClientSide() && this.getControllingPassenger() instanceof LocalPlayer;
     }
     
     
@@ -439,30 +473,33 @@ public class BroomEntity extends Entity implements GeoEntity {
      * 地面和水面碰撞约束：检测向下方块或水面是否会碰撞，并施加向上排斥力
      */
     private void applyGroundRepulsion() {
+        // 如果检测到碰撞或液体，施加向上的排斥力
+        if (hasSupportBelow()) {
+            Vec3 motion = this.getDeltaMovement();
+            this.setDeltaMovement(motion.x, motion.y + ServerConfig.groundRepulsion, motion.z);
+        }
+    }
+
+    private boolean hasSupportBelow() {
         // 创建向下偏移的碰撞箱
-        AABB checkBox = this.getBoundingBox().move(0, -dev.polaris_light.majobroom.config.ServerConfig.groundCheckOffset, 0);
-        
+        AABB checkBox = this.getBoundingBox().move(0, -ServerConfig.groundCheckOffset, 0);
+
         // 检测固体方块碰撞或液体碰撞（使用同一个碰撞箱）
         boolean hasCollision = !this.level().noCollision(this, checkBox);  // 固体方块
         boolean hasLiquid = this.level().containsAnyLiquid(checkBox);      // 液体（水、岩浆等）
-        
-        // 如果检测到碰撞或液体，施加向上的排斥力
-        if (hasCollision || hasLiquid) {
-            Vec3 motion = this.getDeltaMovement();
-            this.setDeltaMovement(motion.x, motion.y + dev.polaris_light.majobroom.config.ServerConfig.groundRepulsion, motion.z);
-        }
+        return hasCollision || hasLiquid;
     }
     
     // ============ 位置同步（客户端接收服务端位置） ============
-    // @Override
-    // public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
-    //     this.lerpX = x;
-    //     this.lerpY = y;
-    //     this.lerpZ = z;
-    //     this.lerpYRot = yRot;
-    //     this.lerpXRot = xRot;
-    //     this.lerpSteps = 10; // 10步平滑插值
-    // }
+    @Override
+    protected void lerpPositionAndRotationStep(int steps, double targetX, double targetY, double targetZ, double targetYRot, double targetXRot) {
+        this.lerpX = targetX;
+        this.lerpY = targetY;
+        this.lerpZ = targetZ;
+        this.lerpYRot = targetYRot;
+        this.lerpXRot = targetXRot;
+        this.lerpSteps = Math.max(steps, 8);
+    }
     
     // ============ 插值目标位置（1.21.1新增，用于客户端渲染） ============
     // @Override

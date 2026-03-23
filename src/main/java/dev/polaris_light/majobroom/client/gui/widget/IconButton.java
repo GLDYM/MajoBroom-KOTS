@@ -8,7 +8,6 @@ import dev.polaris_light.majobroom.client.gui.util.AllKeys;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import javax.annotation.Nonnull;
 
 /**
  * 图标按钮控件
@@ -35,7 +34,7 @@ public class IconButton extends BaseWidget {
     }
 
     @Override
-    public void doRender(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
             isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 

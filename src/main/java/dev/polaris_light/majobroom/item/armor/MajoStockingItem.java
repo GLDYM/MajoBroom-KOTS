@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 
 public class MajoStockingItem extends Item implements GeoItem {
     private static final int EFFECT_DURATION = 340;
-    private static final int EFFECT_REFRESH_THRESHOLD = 40;
     private static final int EFFECT_CHECK_INTERVAL_TICKS = 80;
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

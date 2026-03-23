@@ -16,7 +16,6 @@ import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 import java.util.Map;
-import java.util.Objects;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
 /**

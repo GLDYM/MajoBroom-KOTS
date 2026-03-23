@@ -14,8 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 /**
  * 扫帚配置界面
  * 显示和修改扫帚的个性化配置
@@ -176,7 +174,7 @@ public class BroomConfigScreen extends AbstractBroomScreen {
     }
 
     @Override
-    protected void renderWindow(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
         

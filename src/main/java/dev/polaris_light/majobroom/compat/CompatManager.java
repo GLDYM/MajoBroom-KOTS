@@ -8,6 +8,7 @@ import net.neoforged.fml.ModList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public class CompatManager {
     /**
      * 初始化所有兼容模组
      */
+
+    // TODO: 为什么要使用反射！
     public static void init() {
         LOGGER.info("[MajoBroom] 初始化模组兼容...");
         
@@ -143,7 +146,7 @@ public class CompatManager {
      * @param entity 生物实体
      * @return 扩展装备槽中的装备列表，如果没有兼容模组则返回空列表
      */
-    public static List<ItemStack> getExtraArmorItems(LivingEntity entity) {
+    public static List<ItemStack> getExtraArmorItems(@Nonnull LivingEntity entity) {
         List<ItemStack> extraArmor = new ArrayList<>();
         
         // 检查装饰盔甲模组（如果已加载）

@@ -3,9 +3,7 @@ package dev.polaris_light.majobroom.client.renderer.model;
 import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.entity.BroomEntity;
 import net.minecraft.resources.Identifier;
-import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 /**
  * 扫帚的 GeckoLib 模型

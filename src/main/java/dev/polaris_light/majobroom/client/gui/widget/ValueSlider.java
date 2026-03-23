@@ -12,7 +12,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 /**
@@ -65,7 +64,7 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    protected void renderWidget(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (soundCoolDown > 0) {
             soundCoolDown--;
         }
@@ -248,7 +247,7 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    protected void updateWidgetNarration(@Nonnull NarrationElementOutput output) {
+    protected void updateWidgetNarration(NarrationElementOutput output) {
         output.add(net.minecraft.client.gui.narration.NarratedElementType.TITLE, 
             Component.translatable("narration.slider", label, value));
     }
