@@ -23,6 +23,7 @@ public class ValueSlider extends AbstractWidget {
     private static final int MILESTONE_SIZE = 4;  // 刻度标记大小
     private static final int MILESTONE_INTERVAL = 20;  // 刻度间隔（调整为20以适应更小的宽度）
     private static final int SCALE = 1;  // 像素缩放（调整为1以适应更小的宽度）
+    private static final int SCOLLER_FONT_COLOR = 0xFF442000;  // ARGB: 不透明深棕色
     
     private int value;  // 当前值 (0-100)
     private final int maxValue = 100;
@@ -137,7 +138,7 @@ public class ValueSlider extends AbstractWidget {
         GuiTextures.VALUE_SETTINGS_CURSOR_RIGHT.render(graphics, cursorX + cursorWidth, barY);
         
         // 渲染文本
-        graphics.drawString(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, 0xFF442000, false);
+        graphics.drawString(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, SCOLLER_FONT_COLOR, false);
     }
     
     /**

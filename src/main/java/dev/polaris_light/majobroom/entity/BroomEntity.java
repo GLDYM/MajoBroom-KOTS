@@ -721,7 +721,7 @@ public class BroomEntity extends Entity implements GeoEntity {
         entityData.set(SIDEWAYS_SITTING, tag.getBooleanOr("SidewaysSitting", isSidewaysSitting()) ? (byte) 1 : (byte) 0);
         entityData.set(AUTO_HOVER, tag.getBooleanOr("AutoHover", isAutoHover()) ? (byte) 1 : (byte) 0);
         setSpeedPercent(tag.getIntOr("SpeedPercent", getSpeedPercent()));
-        setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(
+        setPerspectiveMode(PerspectiveMode.fromOrdinal(
             tag.getIntOr("PerspectiveMode", getPerspectiveMode().ordinal())
         ));
 
@@ -824,9 +824,9 @@ public class BroomEntity extends Entity implements GeoEntity {
      * 从物品NBT加载配置到实体
      */
     public void loadConfigFromItemStack(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.getOrDefault(
-            net.minecraft.core.component.DataComponents.CUSTOM_DATA, 
-            net.minecraft.world.item.component.CustomData.EMPTY
+        CustomData customData = stack.getOrDefault(
+            DataComponents.CUSTOM_DATA, 
+            CustomData.EMPTY
         );
         CompoundTag tag = customData.copyTag();
         if (tag.isEmpty()) return;
@@ -844,7 +844,7 @@ public class BroomEntity extends Entity implements GeoEntity {
             setSpeedPercent(tag.getInt("SpeedPercent").orElse(70));
         }
         if (tag.contains("PerspectiveMode")) {
-            setPerspectiveMode(dev.polaris_light.majobroom.common.PerspectiveMode.fromOrdinal(tag.getInt("PerspectiveMode").orElse(2)));
+            setPerspectiveMode(PerspectiveMode.fromOrdinal(tag.getInt("PerspectiveMode").orElse(2)));
         }
     }
     
