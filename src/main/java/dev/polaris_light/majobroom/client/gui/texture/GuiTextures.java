@@ -1,6 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.texture;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -71,28 +71,28 @@ public enum GuiTextures {
     /**
      * 渲染纹理
      */
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, this.width, this.height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 渲染指定区域的纹理
      */
-    public void render(GuiGraphics graphics, int x, int y, int startX, int startY, int width, int height) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y, int startX, int startY, int width, int height) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, startX, startY, width, height, width, height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 裁剪渲染（从纹理的startX, startY开始，渲染指定宽度和高度）
      */
-    public void renderCropped(GuiGraphics graphics, int x, int y, int width, int height) {
+    public void renderCropped(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, width, height, width, height, ATLAS_SIZE, ATLAS_SIZE);
     }
 
     /**
      * 拉伸渲染（将1x1或小纹理拉伸到指定宽度和高度）
      */
-    public void renderStretched(GuiGraphics graphics, int x, int y, int width, int height) {
+    public void renderStretched(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, location, x, y, this.startX, this.startY, width, height, this.width, this.height, ATLAS_SIZE, ATLAS_SIZE);
     }
 

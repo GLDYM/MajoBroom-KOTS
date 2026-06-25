@@ -1,6 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.base;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
  * 可渲染元素接口
@@ -14,6 +14,6 @@ public interface RenderElement {
      * @param x X坐标
      * @param y Y坐标
      */
-    void render(GuiGraphics graphics, int x, int y);
+    void render(GuiGraphicsExtractor graphics, int x, int y);
 }
 

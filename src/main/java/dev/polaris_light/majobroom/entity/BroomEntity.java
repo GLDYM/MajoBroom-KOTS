@@ -37,14 +37,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.object.PlayState;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.object.PlayState;
 
 import java.util.List;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.util.GeckoLibUtil;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -606,6 +606,11 @@ public class BroomEntity extends Entity implements GeoEntity {
     protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
         
+        if (passenger instanceof Player player) {
+            player.setForcedPose(null);
+            player.refreshDimensions();
+        }
+        
         // 清空输入状态
         this.inputLeft = false;
         this.inputRight = false;
@@ -616,9 +621,10 @@ public class BroomEntity extends Entity implements GeoEntity {
     }
     
     @Override
-        public InteractionResult interact(
-            Player player, 
-            InteractionHand hand) {
+    public InteractionResult interact(
+            Player player,
+            InteractionHand hand,
+            Vec3 hitPos) {
         // 玩家按住Shift时不上扫帚（用于其他交互，比如打开GUI等）
         if (player.isShiftKeyDown()) {
             return InteractionResult.PASS;

@@ -86,6 +86,7 @@ public final class BroomClientHandler {
         // 清除强制姿势，恢复正常的姿势控制
         if (mc.player != null) {
             mc.player.setForcedPose(null);
+            mc.player.refreshDimensions();
         }
         
         // 音效会在BroomFlyingSound的tick中自动停止

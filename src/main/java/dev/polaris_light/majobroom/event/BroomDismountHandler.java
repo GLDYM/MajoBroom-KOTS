@@ -2,41 +2,46 @@ package dev.polaris_light.majobroom.event;
 
 import dev.polaris_light.majobroom.MajoBroom;
 import dev.polaris_light.majobroom.entity.BroomEntity;
-import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityMountEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 /**
- * 扫帚下马事件处理器
- * 阻止玩家通过shift键快速下马，必须长按1秒
+ * Handles broom dismount rules.
  */
 @EventBusSubscriber(modid = MajoBroom.MODID)
 public class BroomDismountHandler {
-    
-    /**
-     * 处理实体下马事件
-     * Minecraft原版的shift下马机制会触发此事件
-     * 我们需要取消它，只允许通过我们的网络包下马
-     */
+
     @SubscribeEvent
     public static void onEntityDismount(EntityMountEvent event) {
-        // 只处理下马事件
         if (!event.isDismounting()) {
             return;
         }
-        
-        // 只处理扫帚
+
         if (!(event.getEntityBeingMounted() instanceof BroomEntity broom)) {
             return;
         }
-        
-        // 在服务端检查是否允许下马
-        if (!event.getLevel().isClientSide()) {
-            // 如果扫帚标记为允许下马，则放行；否则取消事件
-            if (!broom.isAllowDismount()) {
-                event.setCanceled(true);
-            }
+
+        // Allow vanilla-forced dismounts during death/removal so rider state can be cleaned up.
+        if (!event.getEntityMounting().isAlive() || event.getEntityMounting().isRemoved()) {
+            return;
+        }
+
+        if (!event.getLevel().isClientSide() && !broom.isAllowDismount()) {
+            event.setCanceled(true);
         }
     }
-}
 
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (!(event.getEntity().getVehicle() instanceof BroomEntity broom)) {
+            return;
+        }
+
+        // Death should always break the vehicle link, otherwise respawn can inherit a stale mount.
+        broom.setAllowDismount(true);
+        event.getEntity().stopRiding();
+        broom.setAllowDismount(false);
+    }
+}

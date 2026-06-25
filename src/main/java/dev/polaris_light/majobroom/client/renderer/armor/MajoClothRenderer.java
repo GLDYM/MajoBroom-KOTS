@@ -1,20 +1,19 @@
 package dev.polaris_light.majobroom.client.renderer.armor;
 
+import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.GeoArmorRenderer;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.RenderPassInfo;
 import dev.polaris_light.majobroom.item.armor.MajoClothItem;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import java.util.Map;
+import java.util.Objects;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.Pose;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.constant.dataticket.DataTicket;
-import software.bernie.geckolib.renderer.base.BoneSnapshots;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.base.RenderPassInfo;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
-
-import java.util.Map;
-import java.util.Objects;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
 /**
  * 魔女长袍的 GeckoLib 渲染器
@@ -41,7 +40,7 @@ public class MajoClothRenderer extends GeoArmorRenderer<MajoClothItem, MajoCloth
      * preRender 逻辑入口（GeckoLib 5 版本）
      */
     public void preRender(RenderPassInfo<ClothRenderState> renderPassInfo, BoneSnapshots snapshots) {
-        HumanoidModel<?> baseModel = Objects.requireNonNull(renderPassInfo.getGeckolibData(DataTickets.HUMANOID_MODEL));
+        HumanoidModel<?> baseModel = Objects.requireNonNull(renderPassInfo.getGeckolibData(GeoArmorRenderer.BASE_MODEL));
         Pose pose = renderPassInfo.getGeckolibData(DataTickets.ENTITY_POSE);
         boolean isRiding = pose == Pose.SITTING;
 

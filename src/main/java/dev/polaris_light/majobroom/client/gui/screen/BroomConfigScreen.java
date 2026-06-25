@@ -10,7 +10,7 @@ import dev.polaris_light.majobroom.client.gui.widget.ValueSlider;
 import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.network.packet.BroomConfigPayload;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -174,7 +174,7 @@ public class BroomConfigScreen extends AbstractBroomScreen {
     }
 
     @Override
-    protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
         
@@ -187,27 +187,27 @@ public class BroomConfigScreen extends AbstractBroomScreen {
         // 渲染标题（居中，考虑不对称padding）
         Component title = Component.translatable("gui.majobroom.broom_config.title");
         int titleX = x + LEFT_PADDING + (background.getWidth() - LEFT_PADDING - RIGHT_PADDING - font.width(title)) / 2;
-        graphics.drawString(font, title, titleX, y + 4, GuiTextures.TITLE_FONT_COLOR, false);
+        graphics.text(font, title, titleX, y + 4, GuiTextures.TITLE_FONT_COLOR, false);
 
         // 渲染配置项标签（统一左对齐，垂直居中按钮）
         // 按钮高度18，文本高度8，所以文本向下偏移 (18-8)/2 = 5
-        graphics.drawString(font, 
+        graphics.text(font, 
             Component.translatable("gui.majobroom.config.perspective_mode"),
             textX, y + 21 + 5, 
             GuiTextures.CONTENT_FONT_COLOR, false);
         
-        graphics.drawString(font, 
+        graphics.text(font, 
             Component.translatable("gui.majobroom.config.sideways_sitting"),
             textX, y + 41 + 5, 
             GuiTextures.CONTENT_FONT_COLOR, false);
         
-        graphics.drawString(font, 
+        graphics.text(font, 
             Component.translatable("gui.majobroom.config.auto_hover"),
             textX, y + 61 + 5, 
             GuiTextures.CONTENT_FONT_COLOR, false);
 
         // 渲染速度滑动条标签（左对齐）
-        graphics.drawString(font, 
+        graphics.text(font, 
             Component.translatable("gui.majobroom.config.speed"),
             textX, y + 86, 
             GuiTextures.CONTENT_FONT_COLOR, false);

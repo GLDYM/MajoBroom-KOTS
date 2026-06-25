@@ -1,6 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.util;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -20,11 +20,11 @@ public class GuiItemRenderer {
      * @param y Y 坐标
      * @param scale 缩放比例
      */
-    public static void renderItemAt(GuiGraphics graphics, ItemStack stack, float x, float y, float scale) {
+    public static void renderItemAt(GuiGraphicsExtractor graphics, ItemStack stack, float x, float y, float scale) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);
-        graphics.renderItem(stack, 0, 0);
+        graphics.item(stack, 0, 0);
         graphics.pose().popMatrix();
     }
 }

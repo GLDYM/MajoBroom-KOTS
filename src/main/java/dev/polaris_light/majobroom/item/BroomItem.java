@@ -9,13 +9,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import javax.annotation.Nonnull;
 
 public class BroomItem extends Item {
     public BroomItem(Properties properties) { super(properties); }
 
     @Override
-    public @Nonnull InteractionResult useOn(UseOnContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();

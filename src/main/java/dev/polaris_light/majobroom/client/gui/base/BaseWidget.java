@@ -1,6 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.base;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -67,7 +67,7 @@ public abstract class BaseWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         beforeRender(graphics, mouseX, mouseY, partialTicks);
         doRender(graphics, mouseX, mouseY, partialTicks);
         afterRender(graphics, mouseX, mouseY, partialTicks);
@@ -77,19 +77,19 @@ public abstract class BaseWidget extends AbstractWidget {
     /**
      * 渲染前准备（子类可重写）
      */
-    protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void beforeRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.pose().pushMatrix();
     }
 
     /**
      * 执行渲染（子类必须实现）
      */
-    protected abstract void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    protected abstract void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks);
 
     /**
      * 渲染后清理（子类可重写）
      */
-    protected void afterRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void afterRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.pose().popMatrix();
     }
 

@@ -1,6 +1,6 @@
 package dev.polaris_light.majobroom.client.gui.base;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -98,9 +98,9 @@ public abstract class BaseScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         // 渲染菜单背景（背景纹理，继承自 Screen）
-        renderMenuBackground(graphics);
+        extractMenuBackground(graphics);
         
         // 渲染窗口背景（半透明遮罩）
         renderWindowBackground(graphics, mouseX, mouseY, partialTicks);
@@ -110,7 +110,7 @@ public abstract class BaseScreen extends Screen {
         
         // 直接渲染控件，不调用 super.render()，因为那会再次调用 renderBackground()
         for (Renderable renderable : renderables) {
-            renderable.render(graphics, mouseX, mouseY, partialTicks);
+            renderable.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
         
         // 渲染工具提示
@@ -121,8 +121,8 @@ public abstract class BaseScreen extends Screen {
      * 渲染窗口背景（半透明遮罩）
      * 默认调用 renderBackground，子类可以重写以自定义背景
      */
-    protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(graphics, mouseX, mouseY, partialTicks);
+    protected void renderWindowBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        extractBackground(graphics, mouseX, mouseY, partialTicks);
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class BaseScreen extends Screen {
      * 使用 fillGradient 渲染半透明遮罩
      */
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         // 使用半透明的深灰色背景，不使用模糊效果
         // 0x50 是透明度（约31%），0x101010 是深灰色
         graphics.fillGradient(0, 0, this.width, this.height, 0x50_101010, 0x50_101010);
@@ -139,12 +139,12 @@ public abstract class BaseScreen extends Screen {
     /**
      * 渲染窗口内容（由子类实现）
      */
-    protected abstract void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
+    protected abstract void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks);
 
     /**
      * 渲染前景层（工具提示等）
      */
-    protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void renderWindowForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         for (Renderable widget : renderables) {
             if (widget instanceof BaseWidget baseWidget && baseWidget.isHovered() && baseWidget.visible) {
                 var tooltip = baseWidget.getToolTip();
@@ -157,7 +157,7 @@ public abstract class BaseScreen extends Screen {
                                 .toList();
 
                     // 使用新版 API
-                    graphics.renderTooltip(
+                        graphics.tooltip(
                             font,
                             clientComponents,
                             mouseX,

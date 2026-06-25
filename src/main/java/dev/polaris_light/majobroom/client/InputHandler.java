@@ -89,10 +89,9 @@ public final class InputHandler {
                     // 显示提示消息（避免频繁显示）
                     long currentTime = System.currentTimeMillis();
                     if (currentTime - lastMessageTime > 1000) { // 至少间隔1秒
-                        player.displayClientMessage(
+                        player.sendSystemMessage(
                             Component.translatable("message.majobroom.hold_shift_to_dismount")
-                                .withStyle(ChatFormatting.YELLOW),
-                            true  // actionBar显示
+                                .withStyle(ChatFormatting.YELLOW)
                         );
                         lastMessageTime = currentTime;
                     }

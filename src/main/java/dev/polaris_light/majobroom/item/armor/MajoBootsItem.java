@@ -9,16 +9,15 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerLevel;
-import org.jspecify.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.renderer.GeoArmorRenderer;
+import com.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
@@ -57,7 +56,7 @@ public class MajoBootsItem extends Item implements GeoItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack itemstack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+    public void inventoryTick(ItemStack itemstack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(itemstack, level, entity, slot);
         if (entity instanceof LivingEntity livingEntity && slot == EquipmentSlot.FEET && ServerConfig.armorBless) {
             if (level.getGameTime() % EFFECT_CHECK_INTERVAL_TICKS == 0) {
@@ -67,8 +66,8 @@ public class MajoBootsItem extends Item implements GeoItem {
             }
         }
         if (itemstack.isDamaged() && ServerConfig.armorImmortal) {
-		    itemstack.setDamageValue(0);
-	    }
+            itemstack.setDamageValue(0);
+        }
     }
 
     private static void refreshEffectIfNeeded(LivingEntity entity, Holder<MobEffect> effect, int amplifier) {

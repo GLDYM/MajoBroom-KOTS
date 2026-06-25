@@ -2,7 +2,7 @@ package dev.polaris_light.majobroom.client.gui.widget;
 
 import dev.polaris_light.majobroom.client.gui.texture.GuiTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -65,7 +65,7 @@ public class ValueSlider extends AbstractWidget {
     }
     
     @Override
-    protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (soundCoolDown > 0) {
             soundCoolDown--;
         }
@@ -119,7 +119,7 @@ public class ValueSlider extends AbstractWidget {
         renderCursor(graphics, barStartX, barY, displayValue);
     }
     
-    private void renderCursor(GuiGraphics graphics, int barStartX, int barY, int value) {
+    private void renderCursor(GuiGraphicsExtractor graphics, int barStartX, int barY, int value) {
         // 计算光标位置
         float xOffset = getXOffsetForValue(value);
         int cursorX = barStartX + (int) xOffset;
@@ -138,7 +138,7 @@ public class ValueSlider extends AbstractWidget {
         GuiTextures.VALUE_SETTINGS_CURSOR_RIGHT.render(graphics, cursorX + cursorWidth, barY);
         
         // 渲染文本
-        graphics.drawString(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, SCOLLER_FONT_COLOR, false);
+        graphics.text(Minecraft.getInstance().font, valueText, cursorX + 2, barY + 3, SCOLLER_FONT_COLOR, false);
     }
     
     /**

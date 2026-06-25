@@ -13,13 +13,13 @@ public final class BroomTrailParticles {
     public static void spawn(Level level, Vec3 pos) {
         if (!level.isClientSide()) return;
         
-        // 直接启用粒子效果，不再检查配置
-        // 使用默认的中等质量（interval=3）
+        // ?
+        // interval=3?
         if (++counter % 3 != 0) return;
 
-        double ox = (level.random.nextDouble() - 0.5D) * 0.5D;
-        double oy = 0.2D + level.random.nextDouble() * 0.2D;
-        double oz = (level.random.nextDouble() - 0.5D) * 0.5D;
+        double ox = (level.getRandom().nextDouble() - 0.5D) * 0.5D;
+        double oy = 0.2D + level.getRandom().nextDouble() * 0.2D;
+        double oz = (level.getRandom().nextDouble() - 0.5D) * 0.5D;
         var clientLevel = Minecraft.getInstance().level;
         if (clientLevel == null) return;
         clientLevel.addParticle(ParticleTypes.CLOUD,

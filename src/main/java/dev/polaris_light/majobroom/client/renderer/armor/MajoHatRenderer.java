@@ -2,9 +2,9 @@ package dev.polaris_light.majobroom.client.renderer.armor;
 
 import dev.polaris_light.majobroom.item.armor.MajoHatItem;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import software.bernie.geckolib.constant.dataticket.DataTicket;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.GeoArmorRenderer;
 
 import java.util.Map;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;

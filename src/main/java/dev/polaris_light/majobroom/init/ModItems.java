@@ -96,7 +96,7 @@ public final class ModItems {
             Attributes.ARMOR,
             new AttributeModifier(
                 Identifier.fromNamespaceAndPath(MajoBroom.MODID, "majo_boots_armor"),
-                2.0,
+                1.0,
                 AttributeModifier.Operation.ADD_VALUE
             ),
             EquipmentSlotGroup.FEET

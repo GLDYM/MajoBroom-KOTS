@@ -1,7 +1,7 @@
 package dev.polaris_light.majobroom.client.gui.texture;
 
 import dev.polaris_light.majobroom.client.gui.base.RenderElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -36,7 +36,7 @@ public enum GuiIcons implements RenderElement {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int x, int y) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y) {
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             ICON_ATLAS,

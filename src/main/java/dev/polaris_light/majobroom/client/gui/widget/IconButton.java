@@ -5,7 +5,7 @@ import dev.polaris_light.majobroom.client.gui.base.RenderElement;
 import dev.polaris_light.majobroom.client.gui.texture.GuiTextures;
 import dev.polaris_light.majobroom.client.gui.util.AllKeys;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 
@@ -34,7 +34,7 @@ public class IconButton extends BaseWidget {
     }
 
     @Override
-    public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void doRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (visible) {
             isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 
@@ -48,7 +48,7 @@ public class IconButton extends BaseWidget {
         }
     }
 
-    protected void drawBg(GuiGraphics graphics, GuiTextures button) {
+    protected void drawBg(GuiGraphicsExtractor graphics, GuiTextures button) {
         button.render(graphics, getX(), getY());
     }
 
