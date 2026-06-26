@@ -560,6 +560,11 @@ public class BroomEntity extends Entity implements GeoEntity {
     protected void removePassenger(@Nonnull Entity passenger) {
         super.removePassenger(passenger);
         
+        if (passenger instanceof Player player) {
+            player.setForcedPose(null);
+            player.refreshDimensions();
+        }
+        
         // 清空输入状态
         this.inputLeft = false;
         this.inputRight = false;
