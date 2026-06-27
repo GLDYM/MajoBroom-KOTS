@@ -18,6 +18,7 @@
   "message.majobroom.showlevel": "当前等级：%d",
   "advancements.majobroom.root.title": "魔法世界",
   "advancements.majobroom.root.description": "制作一把扫帚",
+  "effect.majobroom.decrease_damage": "伤害降低",
 
   "_comment": "GUI 配置",
   "gui.majobroom.broom_config.title": "扫帚配置",

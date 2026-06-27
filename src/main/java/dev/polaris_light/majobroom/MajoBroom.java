@@ -3,6 +3,7 @@ package dev.polaris_light.majobroom;
 import com.mojang.logging.LogUtils;
 import dev.polaris_light.majobroom.compat.CompatManager;
 import dev.polaris_light.majobroom.config.ServerConfig;
+import dev.polaris_light.majobroom.init.ModEffects;
 import dev.polaris_light.majobroom.init.ModEntities;
 import dev.polaris_light.majobroom.init.ModItems;
 import dev.polaris_light.majobroom.init.ModCreativeTabs;
@@ -34,6 +35,7 @@ public class MajoBroom
         ModEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
+        ModEffects.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         // NeoForge.EVENT_BUS.register(this);

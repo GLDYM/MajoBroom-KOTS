@@ -18,6 +18,7 @@
   "message.majobroom.showlevel": "Current level: %d",
   "advancements.majobroom.root.title": "Magical World",
   "advancements.majobroom.root.description": "Craft a broom",
+  "effect.majobroom.decrease_damage": "Decrease Damage",
 
   "_comment": "GUI Config",
   "gui.majobroom.broom_config.title": "Broom Configuration",
