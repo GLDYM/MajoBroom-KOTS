@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * 扫帚下马数据包
  * 客户端 -> 服务端
- * 
+ * <p>
  * 当玩家长按shift键超过1秒时，客户端发送此包请求下马
  */
 public record BroomDismountPayload(int entityId) implements CustomPacketPayload {

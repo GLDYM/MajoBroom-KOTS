@@ -55,9 +55,10 @@ public class ServerConfig
                 .comment("Whether to enable Majo armor stat enhancement (including iron's spellbooks attributes)")
                 .define("armorOverpower", false);
         ARMOR_BLESS_LIST_SPEC = BUILDER
-                .comment("Effects given to player when wear full Majo armor.\n" +
-                        "Due to some problem, you must set value in pattern like \"{namespace}:{effect_name}:{level}\"\n"+
-                        "i.e. minecraft:speed:2")
+                .comment("""
+                        Effects given to player when wear full Majo armor.
+                        Due to some problem, you must set value in pattern like "{namespace}:{effect_name}:{level}"
+                        i.e. minecraft:speed:2""")
                 .define("armorBlessList", new ArrayList<>(Collections.singleton("majobroom:decrease_damage:3")));
         ARMOR_IMMORTAL_SPEC = BUILDER
                 .comment("Whether to enable Majo armor to not take damage")

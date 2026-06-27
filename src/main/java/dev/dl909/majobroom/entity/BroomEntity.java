@@ -767,7 +767,7 @@ public class BroomEntity extends Entity implements GeoEntity {
     
     public void setSpeedPercent(int speedPercent) {
         // 限制在 0-100 范围内
-        int clamped = Math.max(0, Math.min(100, speedPercent));
+        int clamped = Math.clamp(speedPercent, 0, 100);
         entityData.set(SPEED_PERCENT, clamped);
     }
     

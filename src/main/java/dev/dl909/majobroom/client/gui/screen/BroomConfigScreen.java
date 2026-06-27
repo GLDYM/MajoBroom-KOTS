@@ -84,43 +84,33 @@ public class BroomConfigScreen extends AbstractBroomScreen {
         int perspectiveStartX = buttonCenterX;  // 第一个按钮与下方开关按钮左对齐
         
         perspectiveFirstButton = new IconButton(perspectiveStartX, perspectiveY, GuiIcons.I_PERSPECTIVE_FIRST);
-        perspectiveFirstButton.withCallback(() -> {
-            this.perspectiveMode = PerspectiveMode.FIRST_PERSON;
-        });
+        perspectiveFirstButton.withCallback(() -> this.perspectiveMode = PerspectiveMode.FIRST_PERSON);
         perspectiveFirstButton.setToolTip(
             Component.translatable("gui.majobroom.config.perspective.first_person")
         );
         
         perspectiveSecondButton = new IconButton(perspectiveStartX + 18, perspectiveY, GuiIcons.I_PERSPECTIVE_SECOND);
-        perspectiveSecondButton.withCallback(() -> {
-            this.perspectiveMode = PerspectiveMode.SECOND_PERSON;
-        });
+        perspectiveSecondButton.withCallback(() -> this.perspectiveMode = PerspectiveMode.SECOND_PERSON);
         perspectiveSecondButton.setToolTip(
             Component.translatable("gui.majobroom.config.perspective.second_person")
         );
         
         perspectiveThirdButton = new IconButton(perspectiveStartX + 36, perspectiveY, GuiIcons.I_PERSPECTIVE_THIRD);
-        perspectiveThirdButton.withCallback(() -> {
-            this.perspectiveMode = PerspectiveMode.THIRD_PERSON;
-        });
+        perspectiveThirdButton.withCallback(() -> this.perspectiveMode = PerspectiveMode.THIRD_PERSON);
         perspectiveThirdButton.setToolTip(
             Component.translatable("gui.majobroom.config.perspective.third_person")
         );
 
         // 侧坐开关（第二行：y + 41）
         sidewaysSittingButton = new IconButton(buttonCenterX, y + 41, GuiIcons.I_SIDEWAYS_SITTING);
-        sidewaysSittingButton.withCallback(() -> {
-            this.sidewaysSitting = !this.sidewaysSitting;
-        });
+        sidewaysSittingButton.withCallback(() -> this.sidewaysSitting = !this.sidewaysSitting);
         sidewaysSittingButton.setToolTip(
             Component.translatable("gui.majobroom.config.sideways_sitting.tooltip")
         );
 
         // 自动悬浮开关（第三行：y + 61）
         autoHoverButton = new IconButton(buttonCenterX, y + 61, GuiIcons.I_AUTO_HOVER);
-        autoHoverButton.withCallback(() -> {
-            this.autoHover = !this.autoHover;
-        });
+        autoHoverButton.withCallback(() -> this.autoHover = !this.autoHover);
         autoHoverButton.setToolTip(
             Component.translatable("gui.majobroom.config.auto_hover.tooltip")
         );
@@ -134,9 +124,7 @@ public class BroomConfigScreen extends AbstractBroomScreen {
             Component.translatable("gui.majobroom.config.speed"),
             speedPercent
         );
-        speedSlider.withCallback(newValue -> {
-            this.speedPercent = newValue;
-        });
+        speedSlider.withCallback(newValue -> this.speedPercent = newValue);
 
         // 确认按钮（右下角，考虑右侧padding，向右移10像素）
         confirmButton = new IconButton(x + background.getWidth() - RIGHT_PADDING - BUTTON_WIDTH + 8, 

@@ -63,22 +63,4 @@ public class MajoBroom
         });
     }
 
-//    // You can use SubscribeEvent and let the Event Bus discover methods to call
-//    @SubscribeEvent
-//    public void onServerStarting(ServerStartingEvent event)
-//    {
-//        // Do something when the server starts
-//        LOGGER.info("HELLO from server starting");
-//    }
-
-//    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-//    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
-//    public static class ClientModEvents
-//    {
-//        @SubscribeEvent
-//        public static void onClientSetup(FMLClientSetupEvent event)
-//        {
-//            // 客户端初始化（渲染注册请使用 EntityRenderersEvent.RegisterRenderers）
-//        }
-//    }
 }

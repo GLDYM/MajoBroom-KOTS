@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 兼容管理器 - 统一管理所有模组兼容
@@ -82,8 +83,8 @@ public class CompatManager {
         // 2. 检查背包模组（如果已加载）
         if (backpackCompat != null) {
             BackpackCompat.FindResult result = backpackCompat.findItemWithSource(player, item);
-            if (!result.stack.isEmpty()) {
-                return new FindItemResult(result.stack, result.sourceBackpackUUID);
+            if (!result.stack().isEmpty()) {
+                return new FindItemResult(result.stack(), result.sourceBackpackUUID());
             }
         }
 
@@ -113,8 +114,8 @@ public class CompatManager {
         // 2. 检查并从背包中移除（如果已加载）
         if (backpackCompat != null) {
             BackpackCompat.FindResult result = backpackCompat.removeItemFromBackpack(player, item);
-            if (!result.stack.isEmpty()) {
-                return new FindItemResult(result.stack, result.sourceBackpackUUID);
+            if (!result.stack().isEmpty()) {
+                return new FindItemResult(result.stack(), result.sourceBackpackUUID());
             }
         }
 
@@ -157,20 +158,12 @@ public class CompatManager {
         
         return extraArmor;
     }
-    
+
     /**
-     * 查找物品的结果，包含物品和来源背包 UUID
-     */
-    public static class FindItemResult {
-        public static final FindItemResult EMPTY = new FindItemResult(ItemStack.EMPTY, null);
-        
-        public final ItemStack stack;
-        @Nullable
-        public final java.util.UUID sourceBackpackUUID;
-        
-        public FindItemResult(ItemStack stack, @Nullable java.util.UUID sourceBackpackUUID) {
-            this.stack = stack;
-            this.sourceBackpackUUID = sourceBackpackUUID;
-        }
+         * 查找物品的结果，包含物品和来源背包 UUID
+         */
+        public record FindItemResult(ItemStack stack, @Nullable UUID sourceBackpackUUID) {
+            public static final FindItemResult EMPTY = new FindItemResult(ItemStack.EMPTY, null);
+
     }
 }

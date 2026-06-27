@@ -170,7 +170,7 @@ public record ItemDescription(ImmutableList<Component> lines,
                     boolean ctrl = list == linesOnCtrl;
 
                     if (holdDesc.length != 2 || holdCtrl.length != 2) {
-                        list.add(0, Component.literal("Invalid lang formatting!"));
+                        list.addFirst(Component.literal("Invalid lang formatting!"));
                         continue;
                     }
 
@@ -180,7 +180,7 @@ public record ItemDescription(ImmutableList<Component> lines,
                         ctrlBuilder.append(keyCtrl.plainCopy()
                                 .withStyle(ctrl ? WHITE : GRAY));
                         ctrlBuilder.append(Component.literal(holdCtrl[1]).withStyle(DARK_GRAY));
-                        list.add(0, ctrlBuilder);
+                        list.addFirst(ctrlBuilder);
                     }
 
                     if (hasDescription) {
@@ -189,7 +189,7 @@ public record ItemDescription(ImmutableList<Component> lines,
                         shiftBuilder.append(keyShift.plainCopy()
                                 .withStyle(shift ? WHITE : GRAY));
                         shiftBuilder.append(Component.literal(holdDesc[1]).withStyle(DARK_GRAY));
-                        list.add(0, shiftBuilder);
+                        list.addFirst(shiftBuilder);
                     }
 
                     // 添加空行

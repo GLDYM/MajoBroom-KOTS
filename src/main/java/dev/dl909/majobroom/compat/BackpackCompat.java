@@ -12,11 +12,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * SophisticatedBackpacks 模组兼容（NeoForge 1.21.1）
  * 使用反射实现，不需要编译时依赖
- * 
+ * <p>
  * NeoForge 1.21.1 不再使用 LazyOptional，而是直接使用 BackpackWrapper.fromStack()
  */
 class BackpackCompat {
@@ -345,20 +346,12 @@ class BackpackCompat {
             return null;
         }
     }
-    
+
     /**
-     * 查找结果，包含找到的物品和来源背包 UUID
-     */
-    static class FindResult {
-        static final FindResult EMPTY = new FindResult(ItemStack.EMPTY, null);
-        
-        final ItemStack stack;
-        @Nullable
-        final java.util.UUID sourceBackpackUUID;
-        
-        FindResult(ItemStack stack, @Nullable java.util.UUID sourceBackpackUUID) {
-            this.stack = stack;
-            this.sourceBackpackUUID = sourceBackpackUUID;
-        }
+         * 查找结果，包含找到的物品和来源背包 UUID
+         */
+        record FindResult(ItemStack stack, @Nullable UUID sourceBackpackUUID) {
+            static final FindResult EMPTY = new FindResult(ItemStack.EMPTY, null);
+
     }
 }

@@ -71,7 +71,7 @@ public record BroomSummonPayload() implements CustomPacketPayload {
 
             // 先检查玩家是否有扫帚
             CompatManager.FindItemResult findResult = CompatManager.findItemInAllInventories(player, ModItems.BROOM.get());
-            if (findResult.stack.isEmpty()) {
+            if (findResult.stack().isEmpty()) {
                 return;  // 没有扫帚，直接返回
             }
 
@@ -88,12 +88,12 @@ public record BroomSummonPayload() implements CustomPacketPayload {
             CompatManager.FindItemResult removeResult = CompatManager.removeItemFromAllInventories(player, ModItems.BROOM.get());
             
             // 从物品NBT加载配置
-            if (!removeResult.stack.isEmpty()) {
-                broom.loadConfigFromItemStack(removeResult.stack);
+            if (!removeResult.stack().isEmpty()) {
+                broom.loadConfigFromItemStack(removeResult.stack());
             }
             
             // 记录来源背包 UUID（如果是从背包召唤的）
-            broom.setSourceBackpackUUID(removeResult.sourceBackpackUUID);
+            broom.setSourceBackpackUUID(removeResult.sourceBackpackUUID());
             
             level.addFreshEntity(broom);
             player.startRiding(broom);
