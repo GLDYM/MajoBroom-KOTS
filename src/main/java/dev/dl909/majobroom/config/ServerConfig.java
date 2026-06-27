@@ -124,7 +124,7 @@ public class ServerConfig
                 assert amplifier>0;
                 assert amplifier<=256;
 
-                armorBlessList.add(new effect(effect,amplifier));
+                armorBlessList.add(new effect(effect,amplifier - 1));
             }catch (Exception e){
                 Logger.getLogger(MajoBroom.MODID).warning(String.format("failed to process armorBlessList part:%s(%s)",i,e.getMessage()));
             }

@@ -12,7 +12,7 @@ public class DamageDecreaseHandler {
     public static void onLivingEntityDamagedPre(LivingDamageEvent.Pre event){
         var effectInstance = event.getEntity().getEffect(ModEffects.DECREASE_DAMAGE_EFFECT);
         if( effectInstance != null){
-            event.setNewDamage(Math.max(event.getNewDamage()-effectInstance.getAmplifier()*2,0));
+            event.setNewDamage(Math.max(event.getNewDamage()-(effectInstance.getAmplifier()+1)*2,0));
         }
     }
 }
