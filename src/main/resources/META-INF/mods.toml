@@ -42,7 +42,7 @@ authors="${mod_authors}" #optional
 #displayTest="MATCH_VERSION" # if nothing is specified, MATCH_VERSION is the default when clientSideOnly=false, otherwise IGNORE_ALL_VERSION when clientSideOnly=true (#optional)
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''以魔女之旅中伊蕾娜的扫帚为原型，参考借鉴了车万女仆模组中魔理沙的扫帚，所制作的魔女的扫帚模组'''
+description='''A mod featuring Elaina's broom from Majo no Tabitabi, inspired by Marisa's broom from Touhou Maid Mod.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.${mod_id}]] #optional
     # the modid of the dependency
@@ -64,6 +64,13 @@ description='''以魔女之旅中伊蕾娜的扫帚为原型，参考借鉴了�
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${minecraft_version_range}"
     ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="[4.8.2,)"
+    ordering="AFTER"
     side="BOTH"
 
 # Optional dependency for SophisticatedBackpacks integration

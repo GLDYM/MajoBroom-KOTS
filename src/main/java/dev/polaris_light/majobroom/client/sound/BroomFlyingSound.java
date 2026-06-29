@@ -45,7 +45,6 @@ public class BroomFlyingSound extends AbstractTickableSoundInstance {
             } else if (this.time < 40) {
                 this.volume *= (float)(this.time - 20) / 20.0f;
             }
-            float f1 = 0.8f;
             this.pitch = this.volume > 0.8f ? 1.0f + (this.volume - 0.8f) : 1.0f;
             // this.volume = 0f;
         } else {
