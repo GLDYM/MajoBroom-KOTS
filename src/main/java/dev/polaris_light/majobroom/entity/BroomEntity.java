@@ -483,7 +483,10 @@ public class BroomEntity extends Entity implements GeoEntity {
                               @Nonnull MoveFunction moveFunction) {
         if (hasPassenger(passenger)) {
             // 应用浮动偏移
-            double yOffset = this.getPassengersRidingOffset() + floatOffset;
+            double yOffset = this.getPassengersRidingOffset();
+            if (this.level().isClientSide) {
+                yOffset += floatOffset;
+            }
             
             // 设置乘客位置
             moveFunction.accept(passenger, this.getX(), this.getY() + yOffset, this.getZ());
