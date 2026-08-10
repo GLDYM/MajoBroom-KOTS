@@ -35,6 +35,9 @@ import com.google.common.collect.Iterables;
  * 魔女长袍 - 使用GeckoLib动画的装备
  */
 public class MajoClothItem extends ArmorItem implements GeoItem {
+    private static final int EFFECT_DURATION = 340;
+    private static final int EFFECT_CHECK_INTERVAL_TICKS = 80;
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public MajoClothItem(Properties properties) {
@@ -89,11 +92,12 @@ public class MajoClothItem extends ArmorItem implements GeoItem {
     @Override
     public void inventoryTick(ItemStack itemstack, Level world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(itemstack, world, entity, slot, selected);
-        if (entity instanceof LivingEntity livingEntity && Iterables.contains(livingEntity.getArmorSlots(), itemstack)) {
-            if (ServerConfig.armorBless) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 240, 3, false, false));
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 240, 0, false, false));
-            }
+        if (entity instanceof LivingEntity livingEntity
+                && Iterables.contains(livingEntity.getArmorSlots(), itemstack)
+                && ServerConfig.armorBless
+                && world.getGameTime() % EFFECT_CHECK_INTERVAL_TICKS == 0) {
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, EFFECT_DURATION, 3, false, false));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, EFFECT_DURATION, 0, false, false));
         }
 	    if (itemstack.isDamaged() && ServerConfig.armorImmortal) {
 		    itemstack.setDamageValue(0);

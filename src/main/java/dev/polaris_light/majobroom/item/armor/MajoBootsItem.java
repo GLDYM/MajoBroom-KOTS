@@ -30,6 +30,9 @@ import java.util.function.Consumer;
 import com.google.common.collect.Iterables;
 
 public class MajoBootsItem extends ArmorItem implements GeoItem {
+    private static final int EFFECT_DURATION = 340;
+    private static final int EFFECT_CHECK_INTERVAL_TICKS = 80;
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public MajoBootsItem(Properties properties) {
@@ -79,11 +82,12 @@ public class MajoBootsItem extends ArmorItem implements GeoItem {
     @Override
     public void inventoryTick(ItemStack itemstack, Level world, Entity entity, int slot, boolean selected) {
         super.inventoryTick(itemstack, world, entity, slot, selected);
-        if (entity instanceof LivingEntity livingEntity && Iterables.contains(livingEntity.getArmorSlots(), itemstack)) {
-            if (ServerConfig.armorBless) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 240, 1, false, false));
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.LUCK, 240, 2, false, false));
-            }
+        if (entity instanceof LivingEntity livingEntity
+                && Iterables.contains(livingEntity.getArmorSlots(), itemstack)
+                && ServerConfig.armorBless
+                && world.getGameTime() % EFFECT_CHECK_INTERVAL_TICKS == 0) {
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, EFFECT_DURATION, 1, false, false));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.LUCK, EFFECT_DURATION, 2, false, false));
         }
         if (itemstack.isDamaged() && ServerConfig.armorImmortal) {
 		    itemstack.setDamageValue(0);
