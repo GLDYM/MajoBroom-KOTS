@@ -101,7 +101,7 @@ public class MajoStockingItem extends ArmorItem implements GeoItem {
 
     @Override
     public int getDefense() {
-        return ServerConfig.armorOverpower ? 6 : this.material.value().getDefense(this.type);
+        return ServerConfig.armorOverpower ? 9 : this.material.value().getDefense(this.type);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MajoStockingItem extends ArmorItem implements GeoItem {
             Attributes.ARMOR,
             new AttributeModifier(
                 ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "majo_stocking_armor"),
-                ServerConfig.armorOverpower ? 6.0 : this.getDefense(),
+                ServerConfig.armorOverpower ? 9.0 : this.getDefense(),
                 AttributeModifier.Operation.ADD_VALUE
             ),
             EquipmentSlotGroup.LEGS

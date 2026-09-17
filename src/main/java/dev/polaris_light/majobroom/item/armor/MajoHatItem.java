@@ -149,7 +149,7 @@ public class MajoHatItem extends ArmorItem implements GeoItem {
                     new AttributeModifier(
                         ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "majo_hat_max_mana"),
                         ServerConfig.armorOverpower ? 15000 : 200,
-                        AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+                        AttributeModifier.Operation.ADD_VALUE
                     ),
                     EquipmentSlotGroup.HEAD
                 )
