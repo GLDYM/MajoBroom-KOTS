@@ -147,6 +147,19 @@ public class MajoBootsItem extends ArmorItem implements GeoItem {
                     EquipmentSlotGroup.FEET
                 )
             );
+
+        BuiltInRegistries.ATTRIBUTE
+            .getHolder(ResourceLocation.fromNamespaceAndPath("createnuclear", "generic.irradiated_resistance"))
+            .ifPresent(attr -> builder.add(
+                    attr,
+                    new AttributeModifier(
+                        ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "majo_boots_irradiated_resistance"),
+                        1.0,
+                        AttributeModifier.Operation.ADD_VALUE
+                    ),
+                    EquipmentSlotGroup.FEET
+                )
+            );
         
         return builder.build();
     }

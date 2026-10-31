@@ -157,6 +157,19 @@ public class MajoClothItem extends ArmorItem implements GeoItem {
                     EquipmentSlotGroup.CHEST
                 )
             );
+
+        BuiltInRegistries.ATTRIBUTE
+            .getHolder(ResourceLocation.fromNamespaceAndPath("createnuclear", "generic.irradiated_resistance"))
+            .ifPresent(attr -> builder.add(
+                    attr,
+                    new AttributeModifier(
+                        ResourceLocation.fromNamespaceAndPath(MajoBroom.MODID, "majo_cloth_irradiated_resistance"),
+                        1.0,
+                        AttributeModifier.Operation.ADD_VALUE
+                    ),
+                    EquipmentSlotGroup.CHEST
+                )
+            );
         
         return builder.build();
     }
